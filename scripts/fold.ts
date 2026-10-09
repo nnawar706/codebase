@@ -1,20 +1,21 @@
 // Folds a written parser result the way the map does and prints the counts the
 // phase 4 check asks for: nodes, files per node, and whether every edge lands.
 //
-//   node scripts/fold.ts data/preview-react-hook-form.json [--open <group>]...
+//   node scripts/fold.ts data/preview-react-hook-form.json [--open <group>[:<scroll offset>]]...
 
 import { readFileSync } from "node:fs";
-import { fold, foldAt } from "../map/fold.ts";
-import { layout } from "../map/layout.ts";
-import { deriveView } from "../map/view.ts";
+import { fold, foldAt } from "../lib/map/fold.ts";
+import { layout } from "../lib/map/layout.ts";
+import { deriveView } from "../lib/map/view.ts";
 import { readParseResult } from "../parser/read.ts";
 
 const args = process.argv.slice(2);
-const open = new Set<string>();
+const open = new Map<string, number>();
 for (let i = args.indexOf("--open"); i !== -1; i = args.indexOf("--open")) {
   const group = args[i + 1];
   if (!group) throw new Error("--open needs a group id");
-  open.add(group);
+  const [id, offset] = group.split(":");
+  open.set(id, Number(offset ?? 0));
   args.splice(i, 2);
 }
 const [input] = args;
@@ -26,7 +27,7 @@ if (!input) {
 const result = readParseResult(readFileSync(input, "utf8"));
 for (let t = 2; t <= 6; t++) console.log(`threshold ${t}: ${foldAt(result.files, t).groups.length} nodes`);
 const folding = fold(result.files);
-for (const g of open) if (!folding.groups.some((x) => x.id === g)) throw new Error(`No group ${g}`);
+for (const g of open.keys()) if (!folding.groups.some((x) => x.id === g)) throw new Error(`No group ${g}`);
 
 const view = deriveView(result.files, result.edges, folding, open);
 const sizes = folding.groups.map((g) => g.files.length);
@@ -42,7 +43,7 @@ for (const item of view.items) {
   if (item.kind === "folded") landing.add(`g:${item.id}`);
   else {
     for (const r of item.rows) landing.add(`f:${r.path}`);
-    if (item.hidden > 0) landing.add(`m:${item.id}`);
+    if (item.scrolls) landing.add(`u:${item.id}`).add(`d:${item.id}`);
   }
 }
 const dangling = view.edges.filter((e) => !landing.has(e.from) || !landing.has(e.to));
@@ -55,6 +56,6 @@ const { bounds } = layout(view);
 console.log(`layout    ${Math.round(bounds.width)} x ${Math.round(bounds.height)}`);
 console.log();
 for (const item of view.items) {
-  const extra = item.kind === "panel" ? `  panel ${item.rows.length} rows +${item.hidden}` : "";
+  const extra = item.kind === "panel" ? `  panel ${item.rows.length} rows, ${item.above} above, ${item.below} below` : "";
   console.log(`${String(item.files).padStart(5)}  in ${String(item.fanIn).padStart(3)}  out ${String(item.fanOut).padStart(3)}  h ${String(item.height).padStart(3)}  ${item.label.padEnd(24)} ${item.id}${extra}`);
 }

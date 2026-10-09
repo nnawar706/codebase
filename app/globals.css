@@ -15,7 +15,8 @@
 }
 
 /* Surfaces, borders and text are greyscale; blue is the only accent and means
-   "selected or interactive". */
+   "selected or interactive". Green and amber are direction on the map: what
+   flows into the selection and what flows out of it. */
 :root {
   color-scheme: light;
   --background: #fcfcfc;
@@ -25,6 +26,9 @@
   --muted: #71717a;
   --accent: #2563eb;
   --accent-foreground: #ffffff;
+  --edge: #a1a1aa;
+  --incoming: #16a34a;
+  --outgoing: #d97706;
 }
 
 :root[data-theme="dark"] {
@@ -36,6 +40,9 @@
   --muted: #8b8b93;
   --accent: #3b82f6;
   --accent-foreground: #ffffff;
+  --edge: #52525b;
+  --incoming: #22c55e;
+  --outgoing: #f59e0b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -48,6 +55,9 @@
     --muted: #8b8b93;
     --accent: #3b82f6;
     --accent-foreground: #ffffff;
+    --edge: #52525b;
+    --incoming: #22c55e;
+    --outgoing: #f59e0b;
   }
 }
 
@@ -59,6 +69,9 @@
   --color-muted: var(--muted);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-edge: var(--edge);
+  --color-incoming: var(--incoming);
+  --color-outgoing: var(--outgoing);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
