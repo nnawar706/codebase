@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { Project, ts } from "ts-morph";
 import { pickAdapter, type FrameworkAdapter } from "./adapter.ts";
-import { dedupeEdges, fanCounts, type ResolvedImport } from "./graph.ts";
+import { dedupeEdges, fanCounts, routeOrder, type ResolvedImport } from "./graph.ts";
 import { findImports } from "./imports.ts";
 import { createResolver, type Resolution } from "./resolve.ts";
 import {
@@ -162,13 +162,14 @@ export function parseRepository(rootPath: string, adapters: readonly FrameworkAd
   const files = [...nodes].sort().map((p) => {
     const fan = fans.get(p);
     const contents = read.get(p);
-    if (!fan || !contents) throw new Error(`Lost track of ${p}`);
+    const sf = parsed.get(p);
+    if (!fan || !contents || !sf) throw new Error(`Lost track of ${p}`);
     return {
       path: p,
       module: moduleOf(p),
       lines: countLines(contents.text),
       hash: contents.hash,
-      role: adapter.roleOf(p),
+      role: adapter.roleOf(p, sf),
       fanIn: fan.fanIn,
       fanOut: fan.fanOut,
     };
@@ -176,12 +177,22 @@ export function parseRepository(rootPath: string, adapters: readonly FrameworkAd
 
   skippedFiles.sort((a, b) => (a.path < b.path ? -1 : 1));
 
+  // An adapter reads routes from the same parsed files, so a route can only
+  // ever name a file that is on the map.
+  const scan = adapter.routesOf(root, parsed);
+  for (const r of [...scan.routes, ...scan.unrecovered]) {
+    if (!nodes.has(r.file)) throw new Error(`Adapter ${adapter.name} placed a route in ${r.file}, which is not a parsed file`);
+  }
+  const routes = [...scan.routes].sort(routeOrder);
+  const unrecovered = [...scan.unrecovered].sort((a, b) => (a.file < b.file ? -1 : a.file > b.file ? 1 : a.line - b.line));
+
   return {
     schemaVersion: SCHEMA_VERSION,
     root,
     adapter: adapter.name,
     files,
     edges,
+    routes,
     coverage: {
       files: {
         found: sourceFiles.length + symlinks.length,
@@ -192,6 +203,7 @@ export function parseRepository(rootPath: string, adapters: readonly FrameworkAd
       },
       imports: { total, byKind, excludedByReason, unresolved },
       configWarnings: warnings,
+      routes: { unrecovered },
     },
   };
 }

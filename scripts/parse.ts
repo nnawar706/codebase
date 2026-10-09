@@ -42,6 +42,17 @@ function print(result: ParseResult): void {
   console.log(`edges    ${result.edges.length} (${kinds})`);
   console.log();
 
+  const roles = new Map<string, number>();
+  for (const f of result.files) roles.set(f.role ?? "(none)", (roles.get(f.role ?? "(none)") ?? 0) + 1);
+  console.log(`roles    ${[...roles].sort(([a], [b]) => (a < b ? -1 : 1)).map(([r, n]) => `${r} ${n}`).join(", ")}`);
+  console.log();
+
+  const { unrecovered } = result.coverage.routes;
+  console.log(`routes   ${result.routes.length}, ${unrecovered.length} not recovered`);
+  for (const r of result.routes) console.log(`  ${r.method.padEnd(7)} ${r.path}  ${r.file}:${r.line}`);
+  for (const u of unrecovered) console.log(`  none    ${u.file}:${u.line}  ${u.detail}`);
+  console.log();
+
   console.log(`unresolved ${imports.unresolved.length}`);
   for (const u of imports.unresolved.slice(0, UNRESOLVED_SHOWN)) {
     console.log(`  ${u.from}:${u.line}  ${u.kind} "${u.specifier}"  [${u.reason}] ${u.detail}`);

@@ -21,14 +21,17 @@ const TITLES: Record<InsightKind, string> = {
 export function InsightsPanel({
   files,
   edges,
+  convention,
   linking,
 }: {
   files: readonly FileNode[];
   edges: readonly Edge[];
+  /** Whether a role is reached by its framework or tooling rather than an import. */
+  convention: (role: string | null) => boolean;
   linking: Linking;
 }) {
   const [open, setOpen] = useState(false);
-  const found = useMemo(() => insights(files, edges), [files, edges]);
+  const found = useMemo(() => insights(files, edges, convention), [files, edges, convention]);
 
   return (
     <section

@@ -6,20 +6,25 @@ import { adjacency, summarise, type Neighbour } from "@/lib/map/detail";
 import type { Folding } from "@/lib/map/fold";
 import type { Hover, Selection } from "@/lib/map/view";
 import { DEFAULT_DEPTH, walk, type Direction } from "@/lib/graph/walk";
-import type { Edge, FileNode } from "@/parser/types";
+import type { Edge, FileNode, Route, UnrecoveredRoute } from "@/parser/types";
 import { TypeSwatch } from "./FileType";
-import { Empty, Expandable, PathRow, Section, linkingFor, type Linking } from "./PaneParts";
+import { Empty, Expandable, MARK, PathRow, Section, linkingFor, type Linking } from "./PaneParts";
 
 export type Tab = "structure" | "explanation";
 
 /** Files the "imported by nothing" list shows before it's expanded. */
 const UNIMPORTED_SHOWN = 10;
+/** Routes the table shows before it's expanded. */
+const ROUTES_SHOWN = 15;
 
 interface Props {
   name: string;
-  adapter: string;
+  /** The detected framework's name, or null when none was. */
+  framework: string | null;
   files: readonly FileNode[];
   edges: readonly Edge[];
+  routes: readonly Route[];
+  unrecovered: readonly UnrecoveredRoute[];
   skipped: number;
   /** Imports the parser couldn't resolve to a file. */
   unresolved: number;
@@ -113,14 +118,17 @@ export function DetailPane(props: Props) {
 // The pane's resting state: what this repository is, before anything is clicked.
 function Summary({
   name,
-  adapter,
+  framework,
   files,
+  routes,
+  unrecovered,
   skipped,
   unresolved,
   linking,
-}: Pick<Props, "name" | "adapter" | "files" | "skipped" | "unresolved"> & { linking: Linking }) {
+}: Pick<Props, "name" | "framework" | "files" | "routes" | "unrecovered" | "skipped" | "unresolved"> & {
+  linking: Linking;
+}) {
   const summary = useMemo(() => summarise(files), [files]);
-  const framework = adapter === "none" ? null : adapter;
 
   return (
     <>
@@ -133,14 +141,13 @@ function Summary({
       <dl className="grid grid-cols-3 divide-x divide-border border-b border-border">
         <Stat label="Files" value={summary.files} sub={`${skipped} skipped`} />
         <Stat label="Imports" value={summary.imports} sub={`${unresolved} unresolved`} />
-        {/* The parser recovers no routes yet. Absent, with why, rather than a 0
-            that claims it looked. */}
-        <Stat label="Routes" value="—" sub={framework ? "not recovered" : "no adapter"} />
+        <Stat label="Routes" value={routes.length} sub={`${unrecovered.length} not recovered`} />
       </dl>
       <p className="border-b border-border px-3 py-2">
         <span className="tabular-nums">{summary.unidentified}</span>{" "}
         <span className="text-muted">{summary.unidentified === 1 ? "file" : "files"} matched no convention</span>
       </p>
+      <RouteTable routes={routes} unrecovered={unrecovered} linking={linking} />
       <Section title="Most depended on">
         {summary.mostDependedOn.length === 0 ? (
           <Empty>No file is imported by another.</Empty>
@@ -167,6 +174,86 @@ function Summary({
           )}
         </Expandable>
       </Section>
+    </>
+  );
+}
+
+// Every route is a method and a full pattern read from the code, with the line
+// it's declared on so it can be checked by eye. Where one couldn't be read
+// exactly, the table has no row for it, and the list under it says why.
+function RouteTable({
+  routes,
+  unrecovered,
+  linking,
+}: {
+  routes: readonly Route[];
+  unrecovered: readonly UnrecoveredRoute[];
+  linking: Linking;
+}) {
+  return (
+    <Section title="Routes" count={routes.length}>
+      {routes.length === 0 ? (
+        <Empty>No routes recovered.</Empty>
+      ) : (
+        <Expandable items={routes} shown={ROUTES_SHOWN}>
+          {(visible) => (
+            <ul>
+              {visible.map((r) => (
+                <li key={`${r.method} ${r.path} ${r.file}:${r.line}`}>
+                  <button
+                    type="button"
+                    title={`${r.file}:${r.line}`}
+                    onClick={() => linking.onFocus(r.file)}
+                    onMouseEnter={() => linking.onHover({ kind: "file", path: r.file })}
+                    onMouseLeave={() => linking.onHover(null)}
+                    className={`grid w-full cursor-pointer grid-cols-[3.75rem_minmax(0,1fr)] px-3 py-0.5 text-left hover:bg-surface ${
+                      linking.marked(r.file) ? MARK : ""
+                    }`}
+                  >
+                    <span className="font-mono text-[12px] leading-5">{r.method}</span>
+                    <span className="truncate font-mono text-[12px] leading-5">{r.path}</span>
+                    <span className="col-start-2 truncate font-mono text-[11px] leading-4 text-muted">
+                      {r.file}:{r.line}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Expandable>
+      )}
+      {unrecovered.length > 0 && <Unrecovered items={unrecovered} />}
+    </Section>
+  );
+}
+
+function Unrecovered({ items }: { items: readonly UnrecoveredRoute[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        className="flex h-6 w-full cursor-pointer items-center gap-2 px-3 text-left text-muted hover:text-foreground"
+      >
+        <span className="w-2">{open ? "▾" : "▸"}</span>
+        <span>
+          <span className="tabular-nums">{items.length}</span> not recovered, so not listed
+        </span>
+      </button>
+      {open && (
+        <ul>
+          {items.map((u) => (
+            <li key={`${u.file}:${u.line} ${u.detail}`} className="px-3 py-0.5 pl-7">
+              <p className="truncate font-mono text-[11px]" title={`${u.file}:${u.line}`}>
+                {u.file}:{u.line}
+              </p>
+              <p className="text-muted">{u.detail}</p>
+            </li>
+          ))}
+        </ul>
+      )}
     </>
   );
 }

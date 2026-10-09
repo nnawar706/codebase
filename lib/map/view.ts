@@ -1,5 +1,4 @@
 import type { Edge, FileNode } from "../../parser/types.ts";
-import { extensionOf } from "./category.ts";
 import type { Folding } from "./fold.ts";
 import { shortestUniqueLabels } from "./labels.ts";
 
@@ -352,14 +351,14 @@ export function categoryFocus(
   files: readonly FileNode[],
   edges: readonly Edge[],
   folding: Folding,
-  category: string,
+  members: ReadonlySet<string>,
 ): CategoryFocus {
   const result: CategoryFocus = {
     matched: new Map(folding.groups.map((g) => [g.id, 0])),
     endpoints: new Set(),
     edges: new Set(),
   };
-  const matches = (path: string) => extensionOf(path) === category;
+  const matches = (path: string) => members.has(path);
   for (const f of files) {
     if (!matches(f.path)) continue;
     const group = folding.groupOf.get(f.path);

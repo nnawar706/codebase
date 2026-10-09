@@ -2,8 +2,9 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { fold } from "@/lib/map/fold";
+import { rail as railFor, reachedByConvention } from "@/lib/map/roles";
 import { MAX_ROWS, busiestFirst, revealOffset, type Hover, type Selection } from "@/lib/map/view";
-import type { Edge, FileNode } from "@/parser/types";
+import type { Edge, FileNode, Route, UnrecoveredRoute } from "@/parser/types";
 import { MapShell } from "../MapShell";
 import { CategoryRail } from "./CategoryRail";
 import { DependencyMap, type MapActions } from "./DependencyMap";
@@ -19,6 +20,8 @@ export function Workspace({
   adapter,
   files,
   edges,
+  routes,
+  unrecovered,
   skipped,
   unresolved,
 }: {
@@ -26,9 +29,13 @@ export function Workspace({
   adapter: string;
   files: readonly FileNode[];
   edges: readonly Edge[];
+  routes: readonly Route[];
+  unrecovered: readonly UnrecoveredRoute[];
   skipped: number;
   unresolved: number;
 }) {
+  const rail = useMemo(() => railFor(adapter, files), [adapter, files]);
+  const convention = useMemo(() => reachedByConvention(rail.framework), [rail]);
   const folding = useMemo(() => fold(files), [files]);
   const sizes = useMemo(() => new Map(folding.groups.map((g) => [g.id, g.files.length])), [folding]);
   // Each file's position in its folder's panel, in the order the panel lists them.
@@ -49,8 +56,12 @@ export function Workspace({
   const [hover, setHover] = useState<Hover | null>(null);
   // Kept apart from the selection so the open tab survives changing it.
   const [tab, setTab] = useState<Tab>("structure");
-  // A file category picked in the rail: everything outside it dims on the map.
+  // A category picked in the rail, by label: everything outside it dims on the map.
   const [category, setCategory] = useState<string | null>(null);
+  const members = useMemo(
+    () => [...rail.categories, rail.unmatched].find((r) => r.label === category)?.paths ?? null,
+    [rail, category],
+  );
 
   const actions = useMemo<MapActions>(
     () => ({
@@ -108,7 +119,7 @@ export function Workspace({
 
   return (
     <MapShell
-      rail={<CategoryRail files={files} active={category} onPick={setCategory} />}
+      rail={<CategoryRail rail={rail} active={category} onPick={setCategory} />}
       map={
         <DependencyMap
           files={files}
@@ -117,7 +128,7 @@ export function Workspace({
           open={open}
           selection={selection}
           hover={hover}
-          category={category}
+          category={members}
           actions={actions}
         />
       }
@@ -126,9 +137,11 @@ export function Workspace({
           <div className="min-h-0 flex-1 overflow-y-auto">
             <DetailPane
               name={name}
-              adapter={adapter}
+              framework={rail.framework.label}
               files={files}
               edges={edges}
+              routes={routes}
+              unrecovered={unrecovered}
               skipped={skipped}
               unresolved={unresolved}
               folding={folding}
@@ -140,7 +153,7 @@ export function Workspace({
               onHover={setHover}
             />
           </div>
-          <InsightsPanel files={files} edges={edges} linking={linking} />
+          <InsightsPanel files={files} edges={edges} convention={convention} linking={linking} />
         </>
       }
     />

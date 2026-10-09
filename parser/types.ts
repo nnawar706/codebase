@@ -4,7 +4,7 @@
 // Type aliases, not interfaces: only an alias is assignable to a JSON column's
 // type, and the result is stored as-is.
 
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 // Matches the `kind` values the edges table accepts. `require` is not parsed yet.
 export const EDGE_KINDS = ["import", "re-export", "dynamic-import"] as const;
@@ -69,6 +69,29 @@ export type UnresolvedImport = {
   detail: string;
 };
 
+// Every method a route can carry. ALL and SEARCH are NestJS decorators; Next.js
+// handlers only ever use the first seven.
+export const ROUTE_METHODS = ["GET", "HEAD", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "ALL", "SEARCH"] as const;
+export type RouteMethod = (typeof ROUTE_METHODS)[number];
+
+/** A route an adapter read whole from the syntax: method and full pattern, nothing guessed. */
+export type Route = {
+  /** The file that declares it. Always an entry in `files`. */
+  file: string;
+  /** Where the method is declared: the handler, decorator or default export. */
+  line: number;
+  method: RouteMethod;
+  /** The framework's own notation for parameters: [id] for Next.js, :id for NestJS. */
+  path: string;
+};
+
+/** Somewhere a route is declared but couldn't be recovered exactly, so none was emitted. */
+export type UnrecoveredRoute = {
+  file: string;
+  line: number;
+  detail: string;
+};
+
 export type OutcomeCounts = Record<ImportOutcome, number> & { total: number };
 
 export type Coverage = {
@@ -89,6 +112,10 @@ export type Coverage = {
   };
   /** Problems reading the repository's own tsconfig/jsconfig files. */
   configWarnings: string[];
+  routes: {
+    /** Every place a route was left out, with why. */
+    unrecovered: UnrecoveredRoute[];
+  };
 };
 
 export type ParseResult = {
@@ -97,5 +124,7 @@ export type ParseResult = {
   adapter: string;
   files: FileNode[];
   edges: Edge[];
+  /** Sorted by path, then method. */
+  routes: Route[];
   coverage: Coverage;
 };

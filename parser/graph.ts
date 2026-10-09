@@ -1,4 +1,4 @@
-import type { Edge, EdgeKind } from "./types.ts";
+import type { Edge, EdgeKind, Route } from "./types.ts";
 
 export interface ResolvedImport {
   from: string;
@@ -37,4 +37,10 @@ export function fanCounts(
     into.fanIn += 1;
   }
   return counts;
+}
+
+/** The one order routes are listed in, wherever they were read from. */
+export function routeOrder(a: Route, b: Route): number {
+  const by = (x: string, y: string) => (x < y ? -1 : x > y ? 1 : 0);
+  return by(a.path, b.path) || by(a.method, b.method) || by(a.file, b.file) || a.line - b.line;
 }

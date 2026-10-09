@@ -104,7 +104,10 @@ export async function runAnalysis(
     const { parsed, skipped } = result.coverage.files;
     await say(`Parsed ${parsed} source files, skipped ${skipped}`);
 
-    await enter("storing", `Storing ${result.files.length} files and ${result.edges.length} edges`);
+    await enter(
+      "storing",
+      `Storing ${result.files.length} files, ${result.edges.length} edges and ${result.routes.length} routes`,
+    );
     // The parser's own root is a temp directory, meaningless once it's gone,
     // so it isn't stored. Coverage is stored whole.
     const { error } = await db.rpc("store_parse", {
@@ -113,10 +116,11 @@ export async function runAnalysis(
       p_adapter: result.adapter,
       p_files: result.files.map(({ path: p, lines, hash, role }) => ({ path: p, lines, hash, role })),
       p_edges: result.edges,
+      p_routes: result.routes,
       p_coverage: result.coverage,
     });
     if (error) throw new Error(`Storing the parse failed: ${error.message}`);
-    onStage?.("storing", `Stored ${result.files.length} files and ${result.edges.length} edges`);
+    onStage?.("storing", `Stored ${result.files.length} files, ${result.edges.length} edges and ${result.routes.length} routes`);
 
     return { status: "complete", commit, files: result.files.length, edges: result.edges.length };
   } catch (failure) {

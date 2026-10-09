@@ -1,8 +1,9 @@
-import { fanCounts } from "./graph.ts";
+import { fanCounts, routeOrder } from "./graph.ts";
 import {
   EDGE_KINDS,
   EXCLUDED_REASONS,
   IMPORT_OUTCOMES,
+  ROUTE_METHODS,
   SCHEMA_VERSION,
   SKIP_REASONS,
   UNRESOLVED_REASONS,
@@ -11,7 +12,9 @@ import {
   type FileNode,
   type OutcomeCounts,
   type ParseResult,
+  type Route,
   type SkippedFile,
+  type UnrecoveredRoute,
   type UnresolvedImport,
 } from "./types.ts";
 
@@ -55,6 +58,25 @@ const edge = (v: unknown, at: string): Edge => {
   return { from: str(o.from, `${at}.from`), to: str(o.to, `${at}.to`), kind: edgeKind(o.kind, `${at}.kind`) };
 };
 
+const line = (v: unknown, at: string): number => (int(v, at) >= 1 ? int(v, at) : fail(at, "a line number from 1"));
+
+const route = (v: unknown, at: string): Route => {
+  const o = obj(v, at);
+  const path = str(o.path, `${at}.path`);
+  if (!path.startsWith("/")) fail(`${at}.path`, "a pattern starting with /");
+  return {
+    file: str(o.file, `${at}.file`),
+    line: line(o.line, `${at}.line`),
+    method: oneOf(ROUTE_METHODS)(o.method, `${at}.method`),
+    path,
+  };
+};
+
+const unrecoveredRoute = (v: unknown, at: string): UnrecoveredRoute => {
+  const o = obj(v, at);
+  return { file: str(o.file, `${at}.file`), line: line(o.line, `${at}.line`), detail: str(o.detail, `${at}.detail`) };
+};
+
 const skippedFile = (v: unknown, at: string): SkippedFile => {
   const o = obj(v, at);
   return {
@@ -95,6 +117,7 @@ const coverage = (v: unknown, at: string): Coverage => {
   const f = obj(o.files, `${at}.files`);
   const i = obj(o.imports, `${at}.imports`);
   const k = obj(i.byKind, `${at}.imports.byKind`);
+  const r = obj(o.routes, `${at}.routes`);
   const x = obj(i.excludedByReason, `${at}.imports.excludedByReason`);
   return {
     files: {
@@ -119,6 +142,7 @@ const coverage = (v: unknown, at: string): Coverage => {
       unresolved: arr(i.unresolved, `${at}.imports.unresolved`, unresolvedImport),
     },
     configWarnings: arr(o.configWarnings, `${at}.configWarnings`, str),
+    routes: { unrecovered: arr(r.unrecovered, `${at}.routes.unrecovered`, unrecoveredRoute) },
   };
 };
 
@@ -141,6 +165,9 @@ function checkInvariants(r: StoredResult): void {
     edgeKeys.add(key);
   }
 
+  for (const x of r.routes) if (!paths.has(x.file)) fail(`routes ${x.method} ${x.path}`, "a file that is parsed");
+  for (const u of r.coverage.routes.unrecovered) if (!paths.has(u.file)) fail(`coverage.routes.unrecovered ${u.file}`, "a file that is parsed");
+
   const fans = fanCounts([...paths], r.edges);
   for (const f of r.files) {
     const expected = fans.get(f.path);
@@ -157,7 +184,7 @@ function checkInvariants(r: StoredResult): void {
 }
 
 /** A result without where it was parsed: the directory is gone once it's stored. */
-export type StoredResult = Pick<ParseResult, "adapter" | "files" | "edges" | "coverage">;
+export type StoredResult = Pick<ParseResult, "adapter" | "files" | "edges" | "routes" | "coverage">;
 
 /**
  * Validates a result reassembled from storage. Coverage comes back as untyped
@@ -165,11 +192,15 @@ export type StoredResult = Pick<ParseResult, "adapter" | "files" | "edges" | "co
  * checked against everything else: a stored file count that disagrees with
  * the coverage report fails here instead of drawing a quietly different map.
  */
-export function readStoredResult(stored: Omit<StoredResult, "coverage"> & { coverage: unknown }): StoredResult {
+export function readStoredResult(
+  stored: Omit<StoredResult, "coverage" | "routes"> & { coverage: unknown; routes: readonly unknown[] },
+): StoredResult {
   const result: StoredResult = {
     adapter: stored.adapter,
     files: stored.files.map((f, i) => fileNode(f, `files[${i}]`)),
     edges: stored.edges.map((e, i) => edge(e, `edges[${i}]`)),
+    // Rows come back in insertion order; routes are listed in one order everywhere.
+    routes: stored.routes.map((x, i) => route(x, `routes[${i}]`)).sort(routeOrder),
     coverage: coverage(stored.coverage, "coverage"),
   };
   checkInvariants(result);
@@ -186,6 +217,7 @@ export function readParseResult(json: string): ParseResult {
     adapter: str(o.adapter, "result.adapter"),
     files: arr(o.files, "result.files", fileNode),
     edges: arr(o.edges, "result.edges", edge),
+    routes: arr(o.routes, "result.routes", route),
     coverage: coverage(o.coverage, "result.coverage"),
   };
   checkInvariants(result);

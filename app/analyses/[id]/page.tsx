@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { AnalysisStages } from "@/components/AnalysisProgress";
 import { Workspace } from "@/components/map/Workspace";
 import { isStale } from "@/lib/stale";
-import { loadStoredResult } from "@/lib/stored-analysis";
+import { loadStoredResult, predatesRoutes } from "@/lib/stored-analysis";
 import { createServerSupabase } from "@/lib/supabase";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -30,6 +30,19 @@ async function Analysis({ id }: { id: string }) {
 
   if (data.status === "complete") {
     if (!data.adapter) throw new Error(`Analysis ${data.id} is complete but has no adapter recorded`);
+    if (predatesRoutes(data.coverage)) {
+      return (
+        <section className="flex max-w-2xl flex-col gap-2 px-3 pb-3">
+          <h1 className="font-mono text-[13px] font-medium">
+            {data.project.repo_owner}/{data.project.repo_name}
+          </h1>
+          <p>
+            This analysis was stored before framework roles and routes were recorded, so its map can&apos;t be shown
+            as it is now. It needs to run again.
+          </p>
+        </section>
+      );
+    }
     const result = await loadStoredResult(supabase, data.id, data.adapter, data.coverage);
     return (
       <Workspace
@@ -37,6 +50,8 @@ async function Analysis({ id }: { id: string }) {
         adapter={result.adapter}
         files={result.files}
         edges={result.edges}
+        routes={result.routes}
+        unrecovered={result.coverage.routes.unrecovered}
         skipped={result.coverage.files.skipped}
         unresolved={result.coverage.imports.total.unresolved}
       />

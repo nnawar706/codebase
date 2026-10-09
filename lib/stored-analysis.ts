@@ -40,9 +40,18 @@ const edgeKind = (kind: string): EdgeKind => {
  * person's own token. Fan counts and folders aren't stored; they're the same
  * arithmetic over paths and edges the parser does.
  */
+/**
+ * An analysis stored before adapters recovered routes has no route coverage,
+ * and its roles came from adapters that no longer exist. Reading it as if it
+ * were current would show an empty route table that never looked.
+ */
+export function predatesRoutes(coverage: unknown): boolean {
+  return typeof coverage === "object" && coverage !== null && !("routes" in coverage);
+}
+
 export async function loadStoredResult(supabase: Supabase, analysisId: string, adapter: string, coverage: unknown): Promise<StoredResult> {
   // Ordered by id so pages don't overlap or skip while reading.
-  const [files, roles, edges] = await Promise.all([
+  const [files, roles, edges, routes] = await Promise.all([
     readAll("files", (from, to) =>
       supabase.from("files").select("id, path, lines, hash", { count: "exact" }).eq("analysis_id", analysisId).order("id").range(from, to),
     ),
@@ -57,6 +66,14 @@ export async function loadStoredResult(supabase: Supabase, analysisId: string, a
         .order("id")
         .range(from, to),
     ),
+    readAll("routes", (from, to) =>
+      supabase
+        .from("routes")
+        .select("file_id, method, path, line", { count: "exact" })
+        .eq("analysis_id", analysisId)
+        .order("id")
+        .range(from, to),
+    ),
   ]);
 
   const pathOf = new Map(files.map((f) => [f.id, f.path]));
@@ -66,6 +83,12 @@ export async function loadStoredResult(supabase: Supabase, analysisId: string, a
     const to = pathOf.get(e.target_file_id);
     if (!from || !to) throw new Error("A stored edge points at a file that wasn't read");
     return { from, to, kind: edgeKind(e.kind) };
+  });
+
+  const located = routes.map((r) => {
+    const file = pathOf.get(r.file_id);
+    if (!file) throw new Error("A stored route points at a file that wasn't read");
+    return { file, line: r.line, method: r.method, path: r.path };
   });
 
   const paths = files.map((f) => f.path);
@@ -90,6 +113,7 @@ export async function loadStoredResult(supabase: Supabase, analysisId: string, a
     edges: named.sort(
       (a, b) => a.from.localeCompare(b.from) || a.to.localeCompare(b.to) || a.kind.localeCompare(b.kind),
     ),
+    routes: located,
     coverage,
   });
 }

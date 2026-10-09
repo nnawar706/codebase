@@ -34,12 +34,19 @@ export interface Insights {
   long: FileNode[];
 }
 
-export function insights(files: readonly FileNode[], edges: readonly Edge[]): Insights {
+/**
+ * `reachedByConvention` says which roles a framework or tool loads by name or
+ * position. The import graph can't see that, so such a file isn't unused. A
+ * role that is reached by import, like a component, gets no such pass.
+ */
+export function insights(
+  files: readonly FileNode[],
+  edges: readonly Edge[],
+  reachedByConvention: (role: string | null) => boolean,
+): Insights {
   const byPath = (a: FileNode, b: FileNode) => (a.path < b.path ? -1 : 1);
   return {
-    // A file with a role is reached by its framework or tooling, by name or
-    // position. The import graph can't see that, so it isn't unused.
-    unimported: files.filter((f) => f.fanIn === 0 && f.role === null).sort(byPath),
+    unimported: files.filter((f) => f.fanIn === 0 && !reachedByConvention(f.role)).sort(byPath),
     manyImporters: files.filter((f) => f.fanIn >= MANY_IMPORTERS).sort((a, b) => b.fanIn - a.fanIn || byPath(a, b)),
     cycles: cycles(files.map((f) => f.path), edges),
     long: files.filter((f) => f.lines >= LONG_LINES).sort((a, b) => b.lines - a.lines || byPath(a, b)),

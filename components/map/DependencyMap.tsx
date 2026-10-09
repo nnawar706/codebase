@@ -268,8 +268,8 @@ export interface MapProps {
   open: ReadonlyMap<string, number>;
   selection: Selection | null;
   hover: Hover | null;
-  /** The file category picked in the rail, or null. */
-  category: string | null;
+  /** The files in the category picked in the rail, or null. */
+  category: ReadonlySet<string> | null;
   actions: MapActions;
 }
 

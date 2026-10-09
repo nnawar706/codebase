@@ -1,7 +1,7 @@
 // Folds a written parser result the way the map does and prints the counts the
 // phase 4 check asks for: nodes, files per node, and whether every edge lands.
 //
-//   node scripts/fold.ts data/preview-react-hook-form.json [--open <group>[:<scroll offset>]]...
+//   node scripts/fold.ts result.json [--open <group>[:<scroll offset>]]...
 
 import { readFileSync } from "node:fs";
 import { fold, foldAt } from "../lib/map/fold.ts";
