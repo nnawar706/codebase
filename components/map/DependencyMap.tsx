@@ -14,12 +14,12 @@ import {
   type NodeMouseHandler,
   type NodeProps,
 } from "@xyflow/react";
-import { useCallback, useEffect, useMemo, useRef, useState, type WheelEvent } from "react";
-import { fold } from "@/lib/map/fold";
+import { useCallback, useEffect, useMemo, useRef, type WheelEvent } from "react";
+import { extensionOf } from "@/lib/map/category";
+import type { Folding } from "@/lib/map/fold";
 import { layout } from "@/lib/map/layout";
 import {
   HEADER_H,
-  MAX_ROWS,
   ROW_H,
   deriveView,
   highlight,
@@ -27,41 +27,56 @@ import {
   type FoldedItem,
   type HandleId,
   type Highlight,
+  type Hover,
   type PanelItem,
   type Selection,
 } from "@/lib/map/view";
 import type { Edge, FileNode } from "@/parser/types";
-import { TypeSwatch, extensionOf } from "./FileType";
+import { TypeSwatch } from "./FileType";
 
-interface Actions {
+export interface MapActions {
   open: (id: string) => void;
   close: (id: string) => void;
   /** Moves a panel's window by whole rows; negative is up. */
   scroll: (id: string, rows: number) => void;
   selectFile: (path: string, group: string) => void;
+  clear: () => void;
+  hover: (h: Hover | null) => void;
 }
 
 // Each node gets the highlight state it needs to draw itself; null means
-// nothing is selected and everything is at full strength.
-type FoldedData = { item: FoldedItem; lit: boolean; selected: boolean };
-type PanelData = { item: PanelItem; lit: boolean; hl: Highlight | null; selection: Selection | null; actions: Actions };
+// nothing is selected and everything is at full strength. `marked` is what the
+// pointer is over in the detail pane, shown here so the two can be matched up.
+type FoldedData = { item: FoldedItem; lit: boolean; selected: boolean; marked: boolean; actions: MapActions };
+type PanelData = {
+  item: PanelItem;
+  lit: boolean;
+  hl: Highlight | null;
+  selection: Selection | null;
+  marked: Endpoint | null;
+  actions: MapActions;
+};
 type FoldedNode = FlowNode<FoldedData, "folded">;
 type PanelNode = FlowNode<PanelData, "panel">;
 
 const DIM = "opacity-25";
+// Inset so marking a row never changes its size.
+const MARK = "ring-1 ring-inset ring-accent";
 // Handles are where edges attach, not something to grab: nothing on this map
 // is connectable, so they're invisible.
 const handle = "!h-px !min-h-0 !w-px !min-w-0 !border-0 !bg-transparent";
 
 function Folded({ data }: NodeProps<FoldedNode>) {
-  const { item, lit, selected } = data;
+  const { item, lit, selected, marked, actions } = data;
   // Opening is handled by the canvas's onNodeClick, not here; see Canvas.
   return (
     <div
       title={`${item.id} — ${item.files} files, ${item.fanIn} in, ${item.fanOut} out`}
+      onMouseEnter={() => actions.hover({ kind: "group", id: item.id })}
+      onMouseLeave={() => actions.hover(null)}
       className={`flex h-full w-full cursor-pointer flex-col justify-center rounded border bg-surface px-2.5 text-left hover:border-muted ${
         selected ? "border-accent" : "border-border"
-      } ${lit ? "" : DIM}`}
+      } ${marked ? MARK : ""} ${lit || marked ? "" : DIM}`}
     >
       <SlotHandles id="node" />
       <span className="truncate font-mono text-[12px] leading-4">{item.label}</span>
@@ -99,8 +114,8 @@ function SlotHandles({ id }: { id: HandleId }) {
 }
 
 function Panel({ data }: NodeProps<PanelNode>) {
-  const { item, lit, hl, selection, actions } = data;
-  const rowLit = (end: Endpoint) => !hl || hl.endpoints.has(end);
+  const { item, lit, hl, selection, marked, actions } = data;
+  const rowLit = (end: Endpoint) => !hl || hl.endpoints.has(end) || end === marked;
   const above: Endpoint = `u:${item.id}`;
   const below: Endpoint = `d:${item.id}`;
 
@@ -128,6 +143,8 @@ function Panel({ data }: NodeProps<PanelNode>) {
       <button
         type="button"
         onClick={() => actions.close(item.id)}
+        onMouseEnter={() => actions.hover({ kind: "group", id: item.id })}
+        onMouseLeave={() => actions.hover(null)}
         title={`Close ${item.id}`}
         style={{ height: HEADER_H }}
         className="flex shrink-0 cursor-pointer items-center gap-2 border-b border-border bg-surface px-2.5 text-left"
@@ -138,7 +155,9 @@ function Panel({ data }: NodeProps<PanelNode>) {
           <Fans fanIn={item.fanIn} fanOut={item.fanOut} />
         </span>
       </button>
-      {item.scrolls && <Overflow id="above" count={item.above} arrow="↑" word="above" lit={rowLit(above)} />}
+      {item.scrolls && (
+        <Overflow id="above" count={item.above} arrow="↑" word="above" lit={rowLit(above)} marked={marked === above} />
+      )}
       {item.rows.map((row, slot) => {
         const end: Endpoint = `f:${row.path}`;
         const selected = selection?.kind === "file" && selection.path === row.path;
@@ -149,11 +168,13 @@ function Panel({ data }: NodeProps<PanelNode>) {
             key={slot}
             type="button"
             onClick={() => actions.selectFile(row.path, item.id)}
+            onMouseEnter={() => actions.hover({ kind: "file", path: row.path })}
+            onMouseLeave={() => actions.hover(null)}
             title={`${row.path} — ${row.fanIn} in, ${row.fanOut} out`}
             style={{ height: ROW_H }}
             className={`relative flex shrink-0 cursor-pointer items-center gap-2 px-2.5 text-left hover:bg-surface ${
               selected ? "bg-accent/10 text-accent" : ""
-            } ${rowLit(end) ? "" : DIM}`}
+            } ${marked === end ? MARK : ""} ${rowLit(end) ? "" : DIM}`}
           >
             <SlotHandles id={`row-${slot}`} />
             <TypeSwatch ext={extensionOf(row.path)} />
@@ -164,20 +185,37 @@ function Panel({ data }: NodeProps<PanelNode>) {
           </button>
         );
       })}
-      {item.scrolls && <Overflow id="below" count={item.below} arrow="↓" word="below" lit={rowLit(below)} />}
+      {item.scrolls && (
+        <Overflow id="below" count={item.below} arrow="↓" word="below" lit={rowLit(below)} marked={marked === below} />
+      )}
     </div>
   );
 }
 
 // Stands in for the files scrolled out of a panel's window, and carries their
-// edges. Shown even at zero so the panel's height never changes.
-function Overflow({ id, count, arrow, word, lit }: { id: HandleId; count: number; arrow: string; word: string; lit: boolean }) {
+// edges. Shown even at zero so the panel's height never changes. Marked when
+// the pane points at a file scrolled behind it.
+function Overflow({
+  id,
+  count,
+  arrow,
+  word,
+  lit,
+  marked,
+}: {
+  id: HandleId;
+  count: number;
+  arrow: string;
+  word: string;
+  lit: boolean;
+  marked: boolean;
+}) {
   return (
     <div
       style={{ height: ROW_H }}
       className={`relative flex shrink-0 items-center gap-2 px-2.5 text-[11px] text-muted tabular-nums ${
         id === "above" ? "border-b" : "border-t"
-      } border-border ${lit ? "" : DIM}`}
+      } border-border ${marked ? MARK : ""} ${lit ? "" : DIM}`}
     >
       <SlotHandles id={id} />
       {arrow} {count} {word}
@@ -197,13 +235,18 @@ const NODE_Z = 2;
 const MAX_ZOOM = 2;
 const FIT_PADDING = 24;
 
-function Canvas({ files, edges }: { files: readonly FileNode[]; edges: readonly Edge[] }) {
-  const folding = useMemo(() => fold(files), [files]);
-  const sizes = useMemo(() => new Map(folding.groups.map((g) => [g.id, g.files.length])), [folding]);
+export interface MapProps {
+  files: readonly FileNode[];
+  edges: readonly Edge[];
+  folding: Folding;
   /** Open folders, each with the first file its window shows. */
-  const [open, setOpen] = useState<ReadonlyMap<string, number>>(() => new Map());
-  const [selection, setSelection] = useState<Selection | null>(null);
+  open: ReadonlyMap<string, number>;
+  selection: Selection | null;
+  hover: Hover | null;
+  actions: MapActions;
+}
 
+function Canvas({ files, edges, folding, open, selection, hover, actions }: MapProps) {
   const view = useMemo(() => deriveView(files, edges, folding, open), [files, edges, folding, open]);
 
   // Layout depends on which folders are open, never on how far one is
@@ -219,33 +262,10 @@ function Canvas({ files, edges }: { files: readonly FileNode[]; edges: readonly 
     [view, edges, folding, selection],
   );
 
-  const actions = useMemo<Actions>(
-    () => ({
-      open: (id) => {
-        setOpen((prev) => new Map(prev).set(id, 0));
-        setSelection({ kind: "group", id });
-      },
-      close: (id) => {
-        setOpen((prev) => {
-          const next = new Map(prev);
-          next.delete(id);
-          return next;
-        });
-        // A selection inside the closed panel has nothing left to point at.
-        setSelection((prev) => (prev && (prev.kind === "group" ? prev.id : prev.group) === id ? null : prev));
-      },
-      scroll: (id, rows) =>
-        setOpen((prev) => {
-          const current = prev.get(id);
-          if (current === undefined) return prev;
-          const last = Math.max(0, (sizes.get(id) ?? 0) - MAX_ROWS);
-          const next = Math.max(0, Math.min(current + rows, last));
-          return next === current ? prev : new Map(prev).set(id, next);
-        }),
-      selectFile: (path, group) => setSelection({ kind: "file", path, group }),
-    }),
-    [sizes],
-  );
+  // Only a hovered file is marked here; a hovered group came from the map
+  // itself, which already shows it. The mark lands wherever the file is drawn
+  // right now: its row, the overflow row it's scrolled behind, or its folder.
+  const marked = hover?.kind === "file" ? (view.endpoints.get(hover.path) ?? null) : null;
 
   const nodes = useMemo(
     () =>
@@ -255,11 +275,11 @@ function Canvas({ files, edges }: { files: readonly FileNode[]; edges: readonly 
         const common = { id: item.id, position, width: item.width, height: item.height, zIndex: NODE_Z };
         if (item.kind === "folded") {
           const selected = selection?.kind === "group" && selection.id === item.id;
-          return { ...common, type: "folded", data: { item, lit, selected } };
+          return { ...common, type: "folded", data: { item, lit, selected, marked: marked === `g:${item.id}`, actions } };
         }
-        return { ...common, type: "panel", data: { item, lit, hl, selection, actions } };
+        return { ...common, type: "panel", data: { item, lit, hl, selection, marked, actions } };
       }),
-    [view, placed, hl, selection, actions],
+    [view, placed, hl, selection, marked, actions],
   );
 
   const flowEdges = useMemo(
@@ -309,8 +329,6 @@ function Canvas({ files, edges }: { files: readonly FileNode[]; edges: readonly 
     });
   }, [placed, width, height, getViewport, setViewport]);
 
-  const clear = useCallback(() => setSelection(null), []);
-
   // React Flow gives a node `pointer-events: none` unless it's selectable,
   // draggable, or the canvas has a node click handler. Nodes here are neither
   // of the first two, so this handler is what makes any node clickable at all,
@@ -336,7 +354,7 @@ function Canvas({ files, edges }: { files: readonly FileNode[]; edges: readonly 
       // React Flow's default spends the wheel on zoom, leaving a trackpad no way to pan.
       panOnScroll
       zoomActivationKeyCode={["Control", "Meta"]}
-      onPaneClick={clear}
+      onPaneClick={actions.clear}
       onNodeClick={onNodeClick}
       minZoom={0.1}
       maxZoom={MAX_ZOOM}
@@ -345,10 +363,10 @@ function Canvas({ files, edges }: { files: readonly FileNode[]; edges: readonly 
   );
 }
 
-export function DependencyMap({ files, edges }: { files: readonly FileNode[]; edges: readonly Edge[] }) {
+export function DependencyMap(props: MapProps) {
   return (
     <ReactFlowProvider>
-      <Canvas files={files} edges={edges} />
+      <Canvas {...props} />
     </ReactFlowProvider>
   );
 }

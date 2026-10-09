@@ -1,13 +1,9 @@
+import { countByCategory } from "@/lib/map/category";
 import type { FileNode } from "@/parser/types";
-import { TypeSwatch, extensionOf } from "./FileType";
+import { TypeSwatch } from "./FileType";
 
 export function CategoryRail({ files }: { files: readonly Pick<FileNode, "path">[] }) {
-  const counts = new Map<string, number>();
-  for (const f of files) {
-    const ext = extensionOf(f.path);
-    counts.set(ext, (counts.get(ext) ?? 0) + 1);
-  }
-  const rows = [...counts.entries()].sort(([a, m], [b, n]) => n - m || (a < b ? -1 : 1));
+  const rows = countByCategory(files.map((f) => f.path));
 
   return (
     <ul className="flex flex-col">

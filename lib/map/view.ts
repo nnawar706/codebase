@@ -97,6 +97,20 @@ const statsText = (files: number | null, fanIn: number, fanOut: number) =>
 
 const groupLabel = (id: string, label: string) => (id === "." ? "./" : label);
 
+/** Busiest first, so the rows a panel opens on are the ones most leaned on. */
+export const busiestFirst = (a: FileNode, b: FileNode) => b.fanIn - a.fanIn || (a.path < b.path ? -1 : 1);
+
+/**
+ * The window offset that brings the row at `index` into view, moving the
+ * window from `current` as little as possible. A panel not yet open puts the
+ * row at the top; deriveView clamps that if it runs past the last window.
+ */
+export function revealOffset(index: number, current: number | undefined): number {
+  if (current === undefined || index < current) return index;
+  if (index >= current + MAX_ROWS) return index - MAX_ROWS + 1;
+  return current;
+}
+
 /**
  * @param open Open folders, each with the index of the first file its window
  * shows. Out-of-range offsets are clamped.
@@ -127,7 +141,6 @@ export function deriveView(
     imported.get(from)?.add(e.to);
   }
 
-  // Busiest files first, so the rows a panel opens on are the ones most leaned on.
   const ordered = new Map<string, FileNode[]>();
   const windows = new Map<string, { offset: number; rows: FileNode[] }>();
   for (const g of folding.groups) {
@@ -138,7 +151,7 @@ export function deriveView(
       if (!f) throw new Error(`Folded file ${p} is not in the parser's files`);
       return f;
     });
-    members.sort((a, b) => b.fanIn - a.fanIn || (a.path < b.path ? -1 : 1));
+    members.sort(busiestFirst);
     const offset = Math.max(0, Math.min(requested, members.length - MAX_ROWS));
     ordered.set(g.id, members);
     windows.set(g.id, { offset, rows: members.slice(offset, offset + MAX_ROWS) });
@@ -253,6 +266,9 @@ export function deriveView(
 }
 
 export type Selection = { kind: "group"; id: string } | { kind: "file"; path: string; group: string };
+
+/** What the pointer is over, on the map or in the detail pane. Each side marks it on the other. */
+export type Hover = { kind: "file"; path: string } | { kind: "group"; id: string };
 
 export interface Highlight {
   /** Drawn edges touching the selection, by direction relative to it. */

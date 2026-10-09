@@ -1,19 +1,13 @@
-// A file's category is its type, read off its extension. The four common types
-// get a hue; the rest share an outlined grey swatch. Blue, green and amber are
-// taken by selection and direction, so none of these come near them. The rail
-// and the panel rows both draw from here, so a type is one colour everywhere.
+// The four common types get a hue; the rest share an outlined grey swatch.
+// Blue, green and amber are taken by selection and direction, so none of these
+// come near them. Everything that shows a type draws from here, so a type is
+// one colour everywhere.
 const HUES: Record<string, string> = {
   ".ts": "#8b5cf6",
   ".tsx": "#ec4899",
   ".js": "#14b8a6",
   ".jsx": "#f43f5e",
 };
-
-export function extensionOf(path: string): string {
-  const name = path.slice(path.lastIndexOf("/") + 1);
-  const dot = name.lastIndexOf(".");
-  return dot > 0 ? name.slice(dot) : name;
-}
 
 export function TypeSwatch({ ext }: { ext: string }) {
   const hue = HUES[ext];
