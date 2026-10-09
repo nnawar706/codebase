@@ -1,5 +1,8 @@
 // The shape the parser writes. Everything downstream reads this, so a change
 // here is a change to a contract: bump SCHEMA_VERSION when it changes.
+//
+// Type aliases, not interfaces: only an alias is assignable to a JSON column's
+// type, and the result is stored as-is.
 
 export const SCHEMA_VERSION = 2;
 
@@ -7,7 +10,7 @@ export const SCHEMA_VERSION = 2;
 export const EDGE_KINDS = ["import", "re-export", "dynamic-import"] as const;
 export type EdgeKind = (typeof EDGE_KINDS)[number];
 
-export interface FileNode {
+export type FileNode = {
   /** Repository-relative, forward slashes. */
   path: string;
   /** The folder the file sits in, repository-relative. "." for the root. */
@@ -21,23 +24,23 @@ export interface FileNode {
   fanIn: number;
   /** Distinct files this one imports. */
   fanOut: number;
-}
+};
 
 /** One per (from, to, kind). Both ends are always entries in `files`. */
-export interface Edge {
+export type Edge = {
   from: string;
   to: string;
   kind: EdgeKind;
-}
+};
 
 export const SKIP_REASONS = ["declaration-file", "too-large", "binary", "unreadable", "syntax-error", "symlink"] as const;
 export type SkipReason = (typeof SKIP_REASONS)[number];
 
-export interface SkippedFile {
+export type SkippedFile = {
   path: string;
   reason: SkipReason;
   detail: string;
-}
+};
 
 export const IMPORT_OUTCOMES = ["internal", "external", "excluded", "unresolved"] as const;
 export type ImportOutcome = (typeof IMPORT_OUTCOMES)[number];
@@ -56,7 +59,7 @@ export const UNRESOLVED_REASONS = [
 ] as const;
 export type UnresolvedReason = (typeof UNRESOLVED_REASONS)[number];
 
-export interface UnresolvedImport {
+export type UnresolvedImport = {
   from: string;
   line: number;
   /** For a non-literal dynamic import, the expression's source text. */
@@ -64,11 +67,11 @@ export interface UnresolvedImport {
   kind: EdgeKind;
   reason: UnresolvedReason;
   detail: string;
-}
+};
 
 export type OutcomeCounts = Record<ImportOutcome, number> & { total: number };
 
-export interface Coverage {
+export type Coverage = {
   files: {
     found: number;
     parsed: number;
@@ -86,13 +89,13 @@ export interface Coverage {
   };
   /** Problems reading the repository's own tsconfig/jsconfig files. */
   configWarnings: string[];
-}
+};
 
-export interface ParseResult {
+export type ParseResult = {
   schemaVersion: typeof SCHEMA_VERSION;
   root: string;
   adapter: string;
   files: FileNode[];
   edges: Edge[];
   coverage: Coverage;
-}
+};

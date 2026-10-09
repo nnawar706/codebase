@@ -19,34 +19,52 @@ export type Database = {
     Tables: {
       analyses: {
         Row: {
+          adapter: string | null
           commit_sha: string | null
+          coverage: Json | null
           created_at: string
           error: string | null
           finished_at: string | null
           id: string
           org_id: string
           project_id: string
+          stage: string | null
+          stage_message: string | null
+          started_at: string | null
           status: string
+          updated_at: string
         }
         Insert: {
+          adapter?: string | null
           commit_sha?: string | null
+          coverage?: Json | null
           created_at?: string
           error?: string | null
           finished_at?: string | null
           id?: string
           org_id: string
           project_id: string
+          stage?: string | null
+          stage_message?: string | null
+          started_at?: string | null
           status?: string
+          updated_at?: string
         }
         Update: {
+          adapter?: string | null
           commit_sha?: string | null
+          coverage?: Json | null
           created_at?: string
           error?: string | null
           finished_at?: string | null
           id?: string
           org_id?: string
           project_id?: string
+          stage?: string | null
+          stage_message?: string | null
+          started_at?: string | null
           status?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -225,19 +243,25 @@ export type Database = {
       files: {
         Row: {
           analysis_id: string
+          hash: string
           id: string
+          lines: number
           org_id: string
           path: string
         }
         Insert: {
           analysis_id: string
+          hash: string
           id?: string
+          lines: number
           org_id: string
           path: string
         }
         Update: {
           analysis_id?: string
+          hash?: string
           id?: string
+          lines?: number
           org_id?: string
           path?: string
         }
@@ -401,7 +425,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      store_parse: {
+        Args: {
+          p_adapter: string
+          p_analysis_id: string
+          p_commit_sha: string
+          p_coverage: Json
+          p_edges: Json
+          p_files: Json
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

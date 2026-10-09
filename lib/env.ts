@@ -13,6 +13,8 @@ const values = {
   NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
+  // No NEXT_PUBLIC_ prefix, so Next never inlines it into a browser bundle.
+  SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
 };
 
 type EnvName = keyof typeof values;

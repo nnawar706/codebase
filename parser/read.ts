@@ -123,7 +123,7 @@ const coverage = (v: unknown, at: string): Coverage => {
 };
 
 /** Checks the relationships between fields, which the shape alone can't. */
-function checkInvariants(r: ParseResult): void {
+function checkInvariants(r: StoredResult): void {
   const { files: fc, imports } = r.coverage;
   if (fc.found !== fc.parsed + fc.skipped) fail("coverage.files", `found = parsed + skipped (${fc.found} vs ${fc.parsed} + ${fc.skipped})`);
   if (fc.parsed !== r.files.length) fail("coverage.files.parsed", `${r.files.length}, the number of files`);
@@ -154,6 +154,26 @@ function checkInvariants(r: ParseResult): void {
   if (imports.unresolved.length !== imports.total.unresolved) fail("coverage.imports.unresolved", "every unresolved import listed");
   const excludedSum = EXCLUDED_REASONS.reduce((n, k) => n + imports.excludedByReason[k], 0);
   if (excludedSum !== imports.total.excluded) fail("coverage.imports.excludedByReason", "reasons summing to the excluded total");
+}
+
+/** A result without where it was parsed: the directory is gone once it's stored. */
+export type StoredResult = Pick<ParseResult, "adapter" | "files" | "edges" | "coverage">;
+
+/**
+ * Validates a result reassembled from storage. Coverage comes back as untyped
+ * JSON, so it gets the same shape checks as a file, and then everything is
+ * checked against everything else: a stored file count that disagrees with
+ * the coverage report fails here instead of drawing a quietly different map.
+ */
+export function readStoredResult(stored: Omit<StoredResult, "coverage"> & { coverage: unknown }): StoredResult {
+  const result: StoredResult = {
+    adapter: stored.adapter,
+    files: stored.files.map((f, i) => fileNode(f, `files[${i}]`)),
+    edges: stored.edges.map((e, i) => edge(e, `edges[${i}]`)),
+    coverage: coverage(stored.coverage, "coverage"),
+  };
+  checkInvariants(result);
+  return result;
 }
 
 /** Parses and validates a parser output file's contents. Throws on any mismatch. */
