@@ -413,7 +413,7 @@
       "module": "app",
       "lines": 16,
       "hash": "6b4b9bf9a05c5dde4c46d8ff7386df9ee03ceb7df16f5c01dc965e1408eedf38",
-      "role": null,
+      "role": "config",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -422,7 +422,7 @@
       "module": "e2e",
       "lines": 32,
       "hash": "d2031ed4f3eaea92ad167815181cf249152f77bd8aa50ba7c4cbd58f72c583db",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -431,7 +431,7 @@
       "module": "e2e",
       "lines": 394,
       "hash": "7231fa02d70e2a1e9112964db55234a0cbb079d899c0b7ddc71eadc15a3497ef",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -440,7 +440,7 @@
       "module": "e2e",
       "lines": 217,
       "hash": "dba653bb698127fe19400e5d2e2a37eb712ec7549e46b16cd7a00e172fd71074",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -449,7 +449,7 @@
       "module": "e2e",
       "lines": 73,
       "hash": "04bbfdb0b18cd6fcb5239e829e3405f279c7e363cd7a27f4ccedb37f1c439896",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -458,7 +458,7 @@
       "module": "e2e",
       "lines": 203,
       "hash": "704a4d86039903afd93ec726238efac8c414a29f37516fb069209b3d62ba575b",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -467,7 +467,7 @@
       "module": "e2e",
       "lines": 93,
       "hash": "fcd0a7c61242223c97bbce321ca34ec347fb61cc1d1c9d675b3f8b498c784ffc",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -476,7 +476,7 @@
       "module": "e2e",
       "lines": 213,
       "hash": "6b62a78ecfbf151d234f9111878f214c70e586da50b144728679271ae4a23342",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -485,7 +485,7 @@
       "module": "e2e",
       "lines": 40,
       "hash": "910dcce8d39449375c81771d49763b2908e72a6960b9e670b2992fd1d1971270",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -494,7 +494,7 @@
       "module": "e2e",
       "lines": 40,
       "hash": "2fc34ca52363e54feb78ff8f3ff7211d436e37dd170a89324e86b1525145a95a",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -503,7 +503,7 @@
       "module": "e2e",
       "lines": 55,
       "hash": "f64721b9c7bb605735e8d8c71dab460ab66bf70a4debf9f531d0001cd10cb67d",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -512,7 +512,7 @@
       "module": "e2e",
       "lines": 645,
       "hash": "e4e3f24595c4e3ed80c42be5d89324e083c58d8d55627c3366508dcf78c75a76",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -521,7 +521,7 @@
       "module": "e2e",
       "lines": 493,
       "hash": "e8f2565cba401505313d8a166ba0fc48e66f7949adb57ca241b460a2296a59e3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -530,7 +530,7 @@
       "module": "e2e",
       "lines": 646,
       "hash": "1bb013c5363ddd7fd1f3aa2900c1e017d23336f9c0d3fe3d53789c23d63ab964",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -539,7 +539,7 @@
       "module": "e2e",
       "lines": 71,
       "hash": "b62dca818017dd8f86d7ca43eb81c292185ce32e5e861ea2f4191f3c059e184b",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -548,7 +548,7 @@
       "module": "e2e",
       "lines": 80,
       "hash": "4d795a1a54902c6a72706208448423aa553d7c5583193e61aa926d745658ef77",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -557,7 +557,7 @@
       "module": "e2e",
       "lines": 221,
       "hash": "e1ec9d59763d0e1bbd1b460054160fb0a5e9cd4e5632f833eb96b0335f46be98",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -566,7 +566,7 @@
       "module": "e2e",
       "lines": 59,
       "hash": "7ad7e4ba72c0f24b42a1fd9870bd887ae77bbf27028a793cc88cd035dd8a06f3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -575,7 +575,7 @@
       "module": "e2e",
       "lines": 39,
       "hash": "59ed18a4fb0921c4772def394a9641d58433d4c8e27355e53b15af11ef5a8df2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -584,7 +584,7 @@
       "module": "e2e",
       "lines": 47,
       "hash": "d6ad3f36c3b087b71abd8ab940ecfe770ce7ffad5b1c43abdc71faaf3f5cb7d5",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -593,7 +593,7 @@
       "module": "e2e",
       "lines": 79,
       "hash": "a679b6f2dabb884c73cb8e13073ff4af9eaf13308b32a31fec00b4b1ae066b92",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -602,7 +602,7 @@
       "module": "e2e",
       "lines": 31,
       "hash": "a140710f069c2683db92bc037c2e2b74f6607b332e06871a1872915325c6a5f2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -611,7 +611,7 @@
       "module": "e2e",
       "lines": 27,
       "hash": "a9eb0d12aaf6f0003a9fc94c55a060dfc072e37ea8a756e9e64849ce074de685",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -620,7 +620,7 @@
       "module": "e2e",
       "lines": 41,
       "hash": "e55f1254b0b0449ac928c4b7d64d4b626bdea79a46e31468c832671acbba0e2c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -629,7 +629,7 @@
       "module": "e2e",
       "lines": 33,
       "hash": "c5cfacf630c4f5c59df7092c893a2b6aa88d2b5082d80de6ee5b70a75a16e077",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -638,7 +638,7 @@
       "module": "e2e",
       "lines": 22,
       "hash": "e49f6f99c92691e26cd87b742f8a5c2d6a7bfe2b459c0899ff3a5a088dc986c2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -647,7 +647,7 @@
       "module": "e2e",
       "lines": 970,
       "hash": "72d087c09668fa31a5e5afef09de9e31d822cf5ef84ce6add94e6f6c3cc98bec",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -656,7 +656,7 @@
       "module": "e2e",
       "lines": 56,
       "hash": "30652ba6bcc4c46c242a9fd68c866ee25225f8bd6bef9d0714268f501826e725",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -665,7 +665,7 @@
       "module": "e2e",
       "lines": 363,
       "hash": "f6ebd39d0506c3b1dc4cad250c9d8cad9d1936506bf3e25fd6e288256dd722b3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -674,7 +674,7 @@
       "module": "e2e",
       "lines": 230,
       "hash": "3a422ecd31e9649bad805b62d28ed879fb4dab47b5e961df8b9f6dbdc46f2594",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -683,7 +683,7 @@
       "module": "e2e",
       "lines": 179,
       "hash": "102d4378cf3059f4789b2dbb4ff1616d70177c717a3c4dc4a65d800108e6a9c4",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -692,7 +692,7 @@
       "module": "e2e",
       "lines": 67,
       "hash": "34679e5b341965c71a240752f8b0e7812020273a81e60a3c3259590a898dae50",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -701,7 +701,7 @@
       "module": "e2e",
       "lines": 184,
       "hash": "2ec4eb21f081720fba1c3c2601b06a46fd10c76637541962cd6bca7f09a8e08c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -719,7 +719,7 @@
       "module": "e2e",
       "lines": 113,
       "hash": "7627dd9f7a404f24fcd40fa428fe333889ee473172f7d5518f67d6df1a3341cb",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -728,7 +728,7 @@
       "module": "e2e",
       "lines": 99,
       "hash": "705a16e36f61299d4d3da4a497c5a0681ab869c97c3fb38f107bb11e60e931d8",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -737,7 +737,7 @@
       "module": "e2e",
       "lines": 20,
       "hash": "7b772782be80c2845d4a9a7a80e32539bd08ad66661e0bd5903b35027eb32aff",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -746,7 +746,7 @@
       "module": "e2e",
       "lines": 66,
       "hash": "50755232418c73861a0af03adcfb8f917efa367113b0864ff8d6c484015385e2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -755,7 +755,7 @@
       "module": "e2e",
       "lines": 178,
       "hash": "ae5a0bc1a3d7b7cfbf2943dffa4251ba30fe4bfe9850ae93b61a1c22e67c138a",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -764,7 +764,7 @@
       "module": ".",
       "lines": 104,
       "hash": "0509bbaaca34c3ea68ec97f953d7d950e157db1e3c154fd4352dc203814d4b0f",
-      "role": null,
+      "role": "config",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -1421,7 +1421,7 @@
       "module": ".",
       "lines": 18,
       "hash": "0f38d45e285f43df9b41805f00d5fdd0f53265ab9f66253d3ec7b3801a2d4992",
-      "role": null,
+      "role": "config",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -1529,7 +1529,7 @@
       "module": "scripts/jest",
       "lines": 64,
       "hash": "a060a55cbc310f6aec7152de84ad116d787c8adc7443f6652943a8efde6b9986",
-      "role": null,
+      "role": "config",
       "fanIn": 0,
       "fanOut": 0
     },
@@ -1574,7 +1574,7 @@
       "module": "scripts/rollup",
       "lines": 25,
       "hash": "f3e2de86113f5f5274b99bb66a36a1952a2d3766dd47732ea793e0ca6f1d5bd9",
-      "role": null,
+      "role": "config",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1583,7 +1583,7 @@
       "module": "scripts/rollup",
       "lines": 9,
       "hash": "c80ac0137a70c09f32fd2a1d443b78c03a392b711d850490cf732da2cfcb24a4",
-      "role": null,
+      "role": "config",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1592,7 +1592,7 @@
       "module": "src/__tests__",
       "lines": 33,
       "hash": "e4a9724d0867dfa54c0d1f9e66ad44c2ac65090a05c8fbaf10847ca19cde5016",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -1601,7 +1601,7 @@
       "module": "src/__tests__",
       "lines": 27,
       "hash": "ad5de59e6f77be10511f50bdd081089d4653d4d8298d0bf4bd3fbc8af32af108",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1610,7 +1610,7 @@
       "module": "src/__tests__",
       "lines": 1847,
       "hash": "5cf30ef535ee7b8de3c7add29ecb86bc7a7068fbf0d8f5f56aae586827cadbb7",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 7
     },
@@ -1619,7 +1619,7 @@
       "module": "src/__tests__",
       "lines": 497,
       "hash": "59787444eb3621b5c545fb6225e24f24e87d9f08f763ecc2c89bd80a1c7ddcc8",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -1628,7 +1628,7 @@
       "module": "src/__tests__",
       "lines": 476,
       "hash": "835307df3eb46752bcaa5e17e450df63314a2f043de8fbacdbc2961947400e41",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -1637,7 +1637,7 @@
       "module": "src/__tests__",
       "lines": 25,
       "hash": "7d177f53979fcd50c02254cfa8534b818de3e46a3467a210a1d49423a36ba774",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1646,7 +1646,7 @@
       "module": "src/__tests__",
       "lines": 696,
       "hash": "03bb2ea0834371bf49c8b425472764ad5f6d7dab8118dd1349c08db52e66bfe6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -1655,7 +1655,7 @@
       "module": "src/__tests__",
       "lines": 23,
       "hash": "032a46a1662f23be7f1443e6fdafb6330c6d647bd33290d73773bbde14afa340",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1664,7 +1664,7 @@
       "module": "src/__tests__/logic",
       "lines": 86,
       "hash": "6941ae682979f08ba4a2a331ad3133373ebeac60e0db2d85dc5b3370205c0aaa",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1673,7 +1673,7 @@
       "module": "src/__tests__/logic",
       "lines": 237,
       "hash": "c6e14b90f7975c8bf8b585b8c020c84b7534e81fe990e29e22f10cb1e222e53c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -1682,7 +1682,7 @@
       "module": "src/__tests__/logic",
       "lines": 207,
       "hash": "12f12ba1d23e19207986247bc46f79bd3c07f5c335af66f784d1c42914ee7286",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1691,7 +1691,7 @@
       "module": "src/__tests__/logic",
       "lines": 23,
       "hash": "c94f87d48f0264331439a792ba48432eaec74fb2299b5c408c2ac9a126c3c509",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1700,7 +1700,7 @@
       "module": "src/__tests__/logic",
       "lines": 219,
       "hash": "2ca8f29264d25265556b0626523db66313105cb25a83a7e240ca3d4aeb588668",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1709,7 +1709,7 @@
       "module": "src/__tests__/logic",
       "lines": 447,
       "hash": "3259c76e3f2a786a8969c71ec4d672e66d668d17f39a7f414a6f532463476aff",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1718,7 +1718,7 @@
       "module": "src/__tests__/logic",
       "lines": 33,
       "hash": "f8c29ee919da550712d9ec144bcd9fe9886ff3e69b2b64a3f09ba5a3b22469d8",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1727,7 +1727,7 @@
       "module": "src/__tests__/logic",
       "lines": 84,
       "hash": "6a7b24b6b9b0661511e51c3aa7ab28e504343b1cf0a91e30259289c1e335a664",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1736,7 +1736,7 @@
       "module": "src/__tests__/logic",
       "lines": 16,
       "hash": "bde67d609c373409e68d917985292b6ae1c669c9869cbd94a2ed360d359863f1",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1745,7 +1745,7 @@
       "module": "src/__tests__/logic",
       "lines": 14,
       "hash": "a4590280b93e5e1b769a993753768def90425fda1059a7c5c379c0513bebc03a",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1754,7 +1754,7 @@
       "module": "src/__tests__/logic",
       "lines": 58,
       "hash": "6e5d6e0891430695a85d8f9156bc5d53e57d23c11843f8e4d8b9a916ca9ec316",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1763,7 +1763,7 @@
       "module": "src/__tests__/logic",
       "lines": 58,
       "hash": "8d0f3018f2b8198b028dd1b5916ceef9873963ed97b8d1a76a31e4c7b08b99ea",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1772,7 +1772,7 @@
       "module": "src/__tests__/logic",
       "lines": 22,
       "hash": "a0eb3ab3c9b4de6bab1fc9c09a843958382e21f6a179b9d8fdc28df9591c379d",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1781,7 +1781,7 @@
       "module": "src/__tests__/logic",
       "lines": 46,
       "hash": "c866bc6fe2f51f011fad2c9d31ee826c8174ce48b969c4f226e72c2a7298cd52",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1790,7 +1790,7 @@
       "module": "src/__tests__/logic",
       "lines": 54,
       "hash": "22dbda2f6d5a8473889d5e2e56083db98649ed1fe9b8cde7513610e316c8a354",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1799,7 +1799,7 @@
       "module": "src/__tests__/logic",
       "lines": 13,
       "hash": "83e253e57acc64b881b932794d7eeb201d2e7eafe9ce077b25e87e7684999cbf",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1808,7 +1808,7 @@
       "module": "src/__tests__/logic",
       "lines": 69,
       "hash": "943b4ac8cf81034839e7fcd726f697a5d5cd6cc1b31d19df66865f51561dffa2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1817,7 +1817,7 @@
       "module": "src/__tests__/logic",
       "lines": 106,
       "hash": "7e74eaee6d759fa07f7517f569bcc8acec7161bf10c09669f4b9359421de69e9",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1826,7 +1826,7 @@
       "module": "src/__tests__/logic",
       "lines": 39,
       "hash": "425716125b56619f3feb210b8254b011eadda3a515725fa6e3536224fc33e128",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1835,7 +1835,7 @@
       "module": "src/__tests__/logic",
       "lines": 188,
       "hash": "ef8b6bc67e32806cafb8c262aacb3702307c6037082f1c95606ed616438e927e",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1844,7 +1844,7 @@
       "module": "src/__tests__/logic",
       "lines": 246,
       "hash": "e3aee7bbc72f22d1c9eaca09a33ad15996db669efe0900c78f437401bc322dc6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1853,7 +1853,7 @@
       "module": "src/__tests__/logic",
       "lines": 321,
       "hash": "87d05b2cd03dd16a0a2e3fcba7f59c1a2efef7ded295e6e6b30ff6a2a3b2793d",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1862,7 +1862,7 @@
       "module": "src/__tests__/logic",
       "lines": 93,
       "hash": "1f554f7b01d3326b30142f56438e2e94410c009e9974aca1c84e17d28be5acc0",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1871,7 +1871,7 @@
       "module": "src/__tests__/logic",
       "lines": 31,
       "hash": "f39097e4c166c214215a9d02b59d7481e8bca5fcb00ab3cd6a9616737ee551a3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1880,7 +1880,7 @@
       "module": "src/__tests__/logic",
       "lines": 195,
       "hash": "7c424c2882d54290133aad2ef8ee67736ffef15ef90c14ef3c9d11a97c5a2303",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1889,7 +1889,7 @@
       "module": "src/__tests__/logic",
       "lines": 31,
       "hash": "9313fc04e3afaa06167d3705b5f484456114e634bef13c8b4d76788abf421211",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1898,7 +1898,7 @@
       "module": "src/__tests__/logic",
       "lines": 2776,
       "hash": "015d7f23df1ca24937d34d8a7a297bd735efb7bd7c87a4de170b9ce91d8a8caf",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -1907,7 +1907,7 @@
       "module": "src/__tests__",
       "lines": 66,
       "hash": "e44d12e6ad71e063e4b75ddd96d4421e598106d7becc26e86c0275c3c437abe9",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -1916,7 +1916,7 @@
       "module": "src/__tests__",
       "lines": 1172,
       "hash": "1fe2257088c08e36bf814f436fe66329b57e0b3302a70f45d92b398e9e4fb3e2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 4
     },
@@ -1925,7 +1925,7 @@
       "module": "src/__tests__",
       "lines": 622,
       "hash": "67d087d804dd299504db9154447a2f739ceb89265d554e5d90c0c1ce9574d3d2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 7
     },
@@ -1934,7 +1934,7 @@
       "module": "src/__tests__",
       "lines": 2064,
       "hash": "0883e1be0fbf3330dc4c4fbe15e562de0348f7dc5d4436bc82971cce981242f4",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -1943,7 +1943,7 @@
       "module": "src/__tests__",
       "lines": 6000,
       "hash": "b4bf6e5692600f9cd7d076bc00d1b2aeb0fcc37b4c6d1c395e46283173d4d0d3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -1952,7 +1952,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 799,
       "hash": "74a76169b9450c88ab113c7da95ebfa3738ef468b84443fbf84a64d6177d2db1",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 5
     },
@@ -1961,7 +1961,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 892,
       "hash": "b479f3bc6d90004d71bf25698592665a801fe7c203f8b2c17ce99d7a548d7c82",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -1970,7 +1970,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 257,
       "hash": "d8e93b9f75fea400e87a9fa5a71f762ea3ca998f484f94bdad5dfa27fd5a2363",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -1979,7 +1979,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 913,
       "hash": "e332851d71c89c7aa084d9087392abfbaae25c493fa5c47e4be6ec3197415016",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 6
     },
@@ -1988,7 +1988,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 639,
       "hash": "aa0c6ee526ee808f44baae4a0e606d35409f5bed17db66262899a919c6637251",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 7
     },
@@ -1997,7 +1997,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 66,
       "hash": "5879154e779c6c1709860fdf363073b75847f229872ee1aed4ec0f28b01a0ba3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2006,7 +2006,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 670,
       "hash": "7cc8245383c3b7b601eb82d31c8181b87ad7c9808d9ed11a4d786afd0028805b",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 6
     },
@@ -2015,7 +2015,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 1910,
       "hash": "8a89782f7323d67590ce9eb959f5e526a585191e756194f565add3b65ea04058",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 9
     },
@@ -2024,7 +2024,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 479,
       "hash": "0a16a4daf1d853af407815e69c06eedad4ccf86513a4adfb4643ef1688ec25f6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 5
     },
@@ -2033,7 +2033,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 485,
       "hash": "81687d49ccfa1a43104a0d48c305c4c823e66e3b2371e375b652b135a67478f3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 4
     },
@@ -2042,7 +2042,7 @@
       "module": "src/__tests__/useFieldArray",
       "lines": 881,
       "hash": "ca403123f00b48ef2c7e2b3243ce203875a55c47cbd09f639267a954b8baaf29",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 5
     },
@@ -2051,7 +2051,7 @@
       "module": "src/__tests__",
       "lines": 131,
       "hash": "63ea905d5696dac7b3ae563a032f5625af279149f44c70711a3e5c6ff13f2a74",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2060,7 +2060,7 @@
       "module": "src/__tests__",
       "lines": 3794,
       "hash": "207fac5a7eea3900b1bb4cceeb6af321d0179602de31c0f3b9cdebcc1c70f4a1",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 6
     },
@@ -2069,7 +2069,7 @@
       "module": "src/__tests__/useForm",
       "lines": 529,
       "hash": "dbce25aeabaaf5a7a9265690e45622213869527792b9eb4f86729e1b9bf847b6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -2078,7 +2078,7 @@
       "module": "src/__tests__/useForm",
       "lines": 104,
       "hash": "f00c2361676f0a377005fb22ffbeed0f4a89a681aeede3e50dfd1fdbbe321c71",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2087,7 +2087,7 @@
       "module": "src/__tests__/useForm",
       "lines": 2187,
       "hash": "237aa555df74031282c2d37d41ac64b4ca526096e340bb4acbd639777d4beb09",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -2096,7 +2096,7 @@
       "module": "src/__tests__/useForm",
       "lines": 298,
       "hash": "aa69c26f7501f01d6c56c8e642bc27498e8ad5fb6f07448ed89434d15cab74b1",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 4
     },
@@ -2105,7 +2105,7 @@
       "module": "src/__tests__/useForm",
       "lines": 752,
       "hash": "6d79b72fa720d7f434eaa31fbf26707940bdee457c48c368a7d0d3abf41f9210",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -2114,7 +2114,7 @@
       "module": "src/__tests__/useForm",
       "lines": 416,
       "hash": "35f7f2c058aba739332ecfba32a18208d434a3dd1666d41937a09c3fc943dab7",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 5
     },
@@ -2123,7 +2123,7 @@
       "module": "src/__tests__/useForm",
       "lines": 1045,
       "hash": "af6df61f3bb2b1862ca4d47202c181cc9edac42cca44e67c11f52f78e9db24f1",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 6
     },
@@ -2132,7 +2132,7 @@
       "module": "src/__tests__/useForm",
       "lines": 2358,
       "hash": "69dec5da379d4a5b3c5c517521eb8c27a4cd40a848a5c1aa8bbc7e24cadff7d9",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -2141,7 +2141,7 @@
       "module": "src/__tests__/useForm",
       "lines": 78,
       "hash": "9148ce5630332cea64fb428371c633120b70dee11caa5619988f62c14d8c2bf4",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2150,7 +2150,7 @@
       "module": "src/__tests__/useForm",
       "lines": 3515,
       "hash": "cd6058cdde321f54e65a7e4011df771d17773dbabc126ba8b97a49dbe9778e35",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -2159,7 +2159,7 @@
       "module": "src/__tests__/useForm",
       "lines": 248,
       "hash": "c34d9b1a600eb68805bd1c2187c4d97f788a2255b06107118ac5a3047294d1d7",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2168,7 +2168,7 @@
       "module": "src/__tests__/useForm",
       "lines": 736,
       "hash": "655bcb2c8cbe906c3a2daedc2b1a1fe617bff58cf107dc0d059bb7181c5e869b",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2177,7 +2177,7 @@
       "module": "src/__tests__/useForm",
       "lines": 707,
       "hash": "55c0ed287fdb6c92ad6a125aafc73a0943ee0b5aecea7cca57a8acab3a2b701b",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 9
     },
@@ -2186,7 +2186,7 @@
       "module": "src/__tests__/useForm",
       "lines": 419,
       "hash": "ed0e56c488da772bba8ae14eee32431e36c4d5b815415a9802c0bbd7276152d8",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -2195,7 +2195,7 @@
       "module": "src/__tests__/useForm",
       "lines": 153,
       "hash": "60596185955c22e37b38848a35dae2ce19ab7472f5ecaeabbc1bfb358679322d",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2204,7 +2204,7 @@
       "module": "src/__tests__/useForm",
       "lines": 1813,
       "hash": "db4e131fc0f0dcdd5805bee5511875af8125cd0397138e1fea94473337fb2e85",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 9
     },
@@ -2213,7 +2213,7 @@
       "module": "src/__tests__/useForm",
       "lines": 702,
       "hash": "f44cedbbc460bc1c5b8ab63b675df6112b531f9f829d143e463df3575e28dd1c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2222,7 +2222,7 @@
       "module": "src/__tests__/useForm",
       "lines": 754,
       "hash": "6cf043ab3ce291044c64cb0bc8eb0fd80c2eee15855d7e8e7394c9abe34e0149",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -2231,7 +2231,7 @@
       "module": "src/__tests__/useForm",
       "lines": 1529,
       "hash": "360f7afeeb5fecfac140e68b396430a71da52a08261bdc7f993694a18e36a1b3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -2240,7 +2240,7 @@
       "module": "src/__tests__/useForm",
       "lines": 447,
       "hash": "87ba7b5c027f251072b4cd3cd554f1970aea306d957a3cfefb59840fd898cbbf",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2249,7 +2249,7 @@
       "module": "src/__tests__/useForm",
       "lines": 245,
       "hash": "ce39f9cf44c033af57553facd89a8cd1a51046fcd6bf33c0b3fb15c194302694",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2258,7 +2258,7 @@
       "module": "src/__tests__/useForm",
       "lines": 885,
       "hash": "bdcb45c76eb1e9fb8bdadaeae6be62ce8afe36e407896be41da8cb317596f79e",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 9
     },
@@ -2267,7 +2267,7 @@
       "module": "src/__tests__",
       "lines": 57,
       "hash": "bad00a47eff3757b35645d648c2311ff2d2ecebff1bfc026f05bc04586483ab7",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 5
     },
@@ -2276,7 +2276,7 @@
       "module": "src/__tests__",
       "lines": 608,
       "hash": "03fca357a6ee0d1537622cfe3923bdf147fc2ffbee0fc8b3d7846aeec25d3280",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 9
     },
@@ -2285,7 +2285,7 @@
       "module": "src/__tests__",
       "lines": 1110,
       "hash": "f3ee160764de11e3cb0f20a309a3d22bdc40f54e8186720452a4b049a680aaac",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -2294,7 +2294,7 @@
       "module": "src/__tests__",
       "lines": 2417,
       "hash": "041367ede955367a2e4bc6e0780f992bfd138d55ab4c5064f4016a86170d49f4",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 8
     },
@@ -2303,7 +2303,7 @@
       "module": "src/__tests__/utils",
       "lines": 84,
       "hash": "bcaa145f2b12a5e68097a206e49f7fc2682ae255389d6eb5fe631691a2c579a1",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2312,7 +2312,7 @@
       "module": "src/__tests__/utils",
       "lines": 39,
       "hash": "0b0a2cdcfd6a936a27870443944cedba8e15dc67dd46563c8831b85ac3493bc1",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2321,7 +2321,7 @@
       "module": "src/__tests__/utils",
       "lines": 242,
       "hash": "9e24a1483fd5996eb431bcc1991b489ef5325a43a444154bb869bc1917d61a2b",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2330,7 +2330,7 @@
       "module": "src/__tests__/utils",
       "lines": 11,
       "hash": "01de1189781ee008dd8a59dfa125f138cd69b03be1c2b53b4dd3b3f9ffcb28b2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2339,7 +2339,7 @@
       "module": "src/__tests__/utils",
       "lines": 17,
       "hash": "0fa308e61f3d92e8fd1b552c2f9fdd41417ab9dfe45470e2797d2296ae7d2190",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2348,7 +2348,7 @@
       "module": "src/__tests__/utils",
       "lines": 207,
       "hash": "bd80568ae9854d4a75115d058894d0672c463cbe77f45cdcf48abf850e8c0e8f",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2357,7 +2357,7 @@
       "module": "src/__tests__/utils",
       "lines": 261,
       "hash": "800f9890d7abc1d288882838bce179ef6a132819f8393ab3250b31c89f780533",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2366,7 +2366,7 @@
       "module": "src/__tests__/utils",
       "lines": 97,
       "hash": "664e2b383ef164f047253afafe1df310df1680cf22ca3a63b3783ffe8030f0ac",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2375,7 +2375,7 @@
       "module": "src/__tests__/utils",
       "lines": 18,
       "hash": "6d2b7302317311aabf5b9741f85773550489b3ef7be54d34d0464239a3bf4da2",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2384,7 +2384,7 @@
       "module": "src/__tests__/utils",
       "lines": 82,
       "hash": "bda8cb8d3c285ff2f2247129b75d37d70236e7d2d60608a242192bd02c9d5f1d",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2393,7 +2393,7 @@
       "module": "src/__tests__/utils",
       "lines": 36,
       "hash": "ce86cf6016d37e27daa280c21663b97eae3fe671199e6358714bdb975e946e0c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2402,7 +2402,7 @@
       "module": "src/__tests__/utils",
       "lines": 106,
       "hash": "5699f68e334a71ca8c97b3fa4b23cb54dc76cb7f40d3f8d9e7e4e50eebbd36a6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2411,7 +2411,7 @@
       "module": "src/__tests__/utils",
       "lines": 58,
       "hash": "4a88f3d076daf9c976c91bb42b595892d9860eaaaa482a23eeb555cc8869de53",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2420,7 +2420,7 @@
       "module": "src/__tests__/utils",
       "lines": 90,
       "hash": "3fa33e4726a43b4ee9de62cfb442ed0e6db46d00ccafbf5e43a814fbeda27948",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2429,7 +2429,7 @@
       "module": "src/__tests__/utils",
       "lines": 20,
       "hash": "fe18e35f54a96328042beef5548e883557d7ddc7adf31cd0b892a7489fd7a8c4",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2438,7 +2438,7 @@
       "module": "src/__tests__/utils",
       "lines": 7,
       "hash": "f27ea358e58e815f570e0d2eb486e4941ba7792beb5c44eef9146a0c9be3df18",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2447,7 +2447,7 @@
       "module": "src/__tests__/utils",
       "lines": 20,
       "hash": "4d4fad7300e06402a908307cf58679812c242610b35daea21369f59a4dbd9c7f",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2456,7 +2456,7 @@
       "module": "src/__tests__/utils",
       "lines": 7,
       "hash": "ed64bc53e1fed504edf1fa3a95d968ccbc0ac187dbb611b46b677316a4376e44",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2465,7 +2465,7 @@
       "module": "src/__tests__/utils",
       "lines": 23,
       "hash": "9896c1d80a1e523d91f7d34df43900601d8f110d39cc9369913aefd38021e5b6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2474,7 +2474,7 @@
       "module": "src/__tests__/utils",
       "lines": 17,
       "hash": "aff0a99f86946d3eabe4f9a1fdbd7838d3f186932cc3e459740bb067d6f537bd",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2483,7 +2483,7 @@
       "module": "src/__tests__/utils",
       "lines": 15,
       "hash": "99c6ab258295c77e0749ad9ae269e6f2a40f456cc6c5434c0ff06defdd08eb1a",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2492,7 +2492,7 @@
       "module": "src/__tests__/utils",
       "lines": 9,
       "hash": "d856ec8d9a3de9623955c1001a954a7617563c4371458ee48c99f8993a0c7cd6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2501,7 +2501,7 @@
       "module": "src/__tests__/utils",
       "lines": 17,
       "hash": "81f1d1b0f499bc286ed4614b30e1edaa871b40e7a9c22788164466c50aacf658",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2510,7 +2510,7 @@
       "module": "src/__tests__/utils",
       "lines": 21,
       "hash": "e75d5ab5b8febbda9d7cceccdd056ae5a9dc55fe45b50df607205fde632f380e",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2519,7 +2519,7 @@
       "module": "src/__tests__/utils",
       "lines": 35,
       "hash": "c0adea1d0fe4391016ae330a55ad65ceda34cace9f0ecdc4aec52caabbfeed26",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2528,7 +2528,7 @@
       "module": "src/__tests__/utils",
       "lines": 7,
       "hash": "1ab290c66ef154f6e16cde54b7d4d620b285a7b832af6072c2342e32a5565518",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2537,7 +2537,7 @@
       "module": "src/__tests__/utils",
       "lines": 14,
       "hash": "9007dc47717869cd06e3c68f92757f157eb19129ed954c0d88a73053f19eaba9",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2546,7 +2546,7 @@
       "module": "src/__tests__/utils",
       "lines": 7,
       "hash": "4147af1877ca1515a086829c431cfe1cd37696c08e4948e03c512468a209f93c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2555,7 +2555,7 @@
       "module": "src/__tests__/utils",
       "lines": 24,
       "hash": "425d74cffd4faf3b63db389ed0c9c8f81212ca664e38f0934deb3c7f26529c40",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2564,7 +2564,7 @@
       "module": "src/__tests__/utils",
       "lines": 16,
       "hash": "e8a47171660876d07db330a3712dc3adbad50d113fc31ecda6282ae8fa95db00",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2573,7 +2573,7 @@
       "module": "src/__tests__/utils",
       "lines": 57,
       "hash": "bb08fba0c1339a08f0fcd38d81017f627b63652c32f4d81d914847dea4131dcc",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2582,7 +2582,7 @@
       "module": "src/__tests__/utils",
       "lines": 33,
       "hash": "752700eb70182737cb816647c50aa42275191aa9c6eaff4eb3ac7cff3a45a979",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -2591,7 +2591,7 @@
       "module": "src/__tests__/utils",
       "lines": 71,
       "hash": "bcd3ce62ef0c65ee23082e0d03fc1e33b4a86c748363c18b860e4417fabc3227",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2600,7 +2600,7 @@
       "module": "src/__tests__/utils",
       "lines": 13,
       "hash": "92f54b0f8b2d23fcb3e8b1434e4b5ea50827c27390cc652565ba2d6bdfcf971c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2609,7 +2609,7 @@
       "module": "src/__tests__/utils",
       "lines": 19,
       "hash": "3311b87a6d25af637b16740d473280fc785c9dc255844bedc7c9a19112a97d4c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2618,7 +2618,7 @@
       "module": "src/__tests__/utils",
       "lines": 76,
       "hash": "0863c67509529fd2342d7cc50082621564082288f49c1e020ff4e20aa7df5761",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2627,7 +2627,7 @@
       "module": "src/__tests__/utils",
       "lines": 153,
       "hash": "ec1211d060f71fcf7f77aca07e2bac869af637799219c35d9683581a008ae3e6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2636,7 +2636,7 @@
       "module": "src/__tests__/utils",
       "lines": 71,
       "hash": "935f0a03eb0343ec3d18713f00b863a59af20ac63df2b57fddb6467c8ef5cd2e",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2645,7 +2645,7 @@
       "module": "src/__tests__/utils",
       "lines": 37,
       "hash": "04d7694b578be0667696b21df87b6ba9dbd4017bfb9d07c29c5e00a8d37bce61",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2654,7 +2654,7 @@
       "module": "src/__tests__/utils",
       "lines": 61,
       "hash": "d2d0e1d722339e5fd4dcaae52cc2b351ee289990961c3853a46ca6486381af26",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2663,7 +2663,7 @@
       "module": "src/__tests__/utils",
       "lines": 369,
       "hash": "87c8b463ce2869fbf59553581dbcc3d7e7b8848eb948fabf13ac6127291bf19c",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2672,7 +2672,7 @@
       "module": "src/__tests__/utils",
       "lines": 43,
       "hash": "42dae10f8338e53ea051009c594962e5f29a2b19b6d6c4ec17af2d2b2bff351d",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 1
     },
@@ -2681,7 +2681,7 @@
       "module": "src/__tests__/utils",
       "lines": 54,
       "hash": "3a445c5180fda45a77cac0fb8fed4b371789afa0b98d02ee1badfc082c45ec41",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2690,7 +2690,7 @@
       "module": "src/__tests__",
       "lines": 22,
       "hash": "ad7c0e37848863bf9b89c2d2c08655de0bfa57fa6e890b3bd258f60de083a4de",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2699,7 +2699,7 @@
       "module": "src/__tests__",
       "lines": 653,
       "hash": "b39bfe39884bbedd6fcfd384d97693f4b971d9f04324ef4307fc944210b6fc9a",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 4
     },
@@ -2762,7 +2762,7 @@
       "module": "src/__typetest__",
       "lines": 265,
       "hash": "24643dd97b985d5e32546358ea56d06e7c7c12e04942b48975165ff0700382c6",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2771,7 +2771,7 @@
       "module": "src/__typetest__",
       "lines": 26,
       "hash": "5ba9466c8fae953647a205b25d93a3f4208e832d14c36d5a23a1f9a1c31daa9f",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2780,7 +2780,7 @@
       "module": "src/__typetest__",
       "lines": 148,
       "hash": "464c65fc2dd4a453a667a80e1d7d76e4c16a85f334514502622fded1e3ac7a82",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 5
     },
@@ -2789,7 +2789,7 @@
       "module": "src/__typetest__",
       "lines": 283,
       "hash": "4a5cc47a8b1845af29fc9325e9ff28d06f1099782809acde0b631b86f660dcca",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -2798,7 +2798,7 @@
       "module": "src/__typetest__",
       "lines": 164,
       "hash": "035bb5c098d191843e4c3da935ff4d3d67ee602baa45381b44ca25ab0fb19e76",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },
@@ -2807,7 +2807,7 @@
       "module": "src/__typetest__",
       "lines": 130,
       "hash": "6b83ccf99c71641ebd62243ed1424811c6021c83e5f1234854ff182b17383cf0",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2816,7 +2816,7 @@
       "module": "src/__typetest__/path",
       "lines": 812,
       "hash": "d22a409a4c6670feefe81a21af4be135cc821255f006250bb01702445dfa1606",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2825,7 +2825,7 @@
       "module": "src/__typetest__/path",
       "lines": 163,
       "hash": "650b9ca8dd2ef967116eff37ad3224297c757a3f2e23cdac45bd2027c65dc68a",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2834,7 +2834,7 @@
       "module": "src/__typetest__",
       "lines": 33,
       "hash": "bf8b92a43a8cb6c7916e93f3c0b5cd5420b9bb2a44bb9b376317f7f432fb0141",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2843,7 +2843,7 @@
       "module": "src/__typetest__",
       "lines": 87,
       "hash": "df0633e766eae0eb8f4a350795ac5086ca727b8608c0e3437751cf01b46a74a3",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2852,7 +2852,7 @@
       "module": "src/__typetest__",
       "lines": 137,
       "hash": "5a10ca8f6a5bbb19899811a7c776754664e61161a3e3fc0031ca7c151c2b978f",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 2
     },
@@ -2861,7 +2861,7 @@
       "module": "src/__typetest__",
       "lines": 119,
       "hash": "da904c32ac04d1ccedc8b4b7778b4849c5b59bc8d1d1bc40547873da780a73a8",
-      "role": null,
+      "role": "test",
       "fanIn": 0,
       "fanOut": 3
     },

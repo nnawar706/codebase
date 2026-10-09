@@ -8,6 +8,8 @@ import { MapShell } from "../MapShell";
 import { CategoryRail } from "./CategoryRail";
 import { DependencyMap, type MapActions } from "./DependencyMap";
 import { DetailPane, type Tab } from "./DetailPane";
+import { InsightsPanel } from "./InsightsPanel";
+import { linkingFor } from "./PaneParts";
 
 // The map and the detail pane read and change the same selection, open folders
 // and hover, so that state lives here rather than in either. Everything either
@@ -47,6 +49,8 @@ export function Workspace({
   const [hover, setHover] = useState<Hover | null>(null);
   // Kept apart from the selection so the open tab survives changing it.
   const [tab, setTab] = useState<Tab>("structure");
+  // A file category picked in the rail: everything outside it dims on the map.
+  const [category, setCategory] = useState<string | null>(null);
 
   const actions = useMemo<MapActions>(
     () => ({
@@ -100,9 +104,11 @@ export function Workspace({
     [folding, rowIndex, sizes],
   );
 
+  const linking = linkingFor(hover, folding, focusFile, setHover);
+
   return (
     <MapShell
-      rail={<CategoryRail files={files} />}
+      rail={<CategoryRail files={files} active={category} onPick={setCategory} />}
       map={
         <DependencyMap
           files={files}
@@ -111,25 +117,31 @@ export function Workspace({
           open={open}
           selection={selection}
           hover={hover}
+          category={category}
           actions={actions}
         />
       }
       detail={
-        <DetailPane
-          name={name}
-          adapter={adapter}
-          files={files}
-          edges={edges}
-          skipped={skipped}
-          unresolved={unresolved}
-          folding={folding}
-          selection={selection}
-          hover={hover}
-          tab={tab}
-          onTab={setTab}
-          onFocus={focusFile}
-          onHover={setHover}
-        />
+        <>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <DetailPane
+              name={name}
+              adapter={adapter}
+              files={files}
+              edges={edges}
+              skipped={skipped}
+              unresolved={unresolved}
+              folding={folding}
+              selection={selection}
+              hover={hover}
+              tab={tab}
+              onTab={setTab}
+              onFocus={focusFile}
+              onHover={setHover}
+            />
+          </div>
+          <InsightsPanel files={files} edges={edges} linking={linking} />
+        </>
       }
     />
   );

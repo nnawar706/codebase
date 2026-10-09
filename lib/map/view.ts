@@ -1,4 +1,5 @@
 import type { Edge, FileNode } from "../../parser/types.ts";
+import { extensionOf } from "./category.ts";
 import type { Folding } from "./fold.ts";
 import { shortestUniqueLabels } from "./labels.ts";
 
@@ -97,6 +98,10 @@ const statsText = (files: number | null, fanIn: number, fanOut: number) =>
 
 const groupLabel = (id: string, label: string) => (id === "." ? "./" : label);
 
+// Room for a category's match count ("3/12 files") is kept whether or not one
+// is picked, so picking a category never resizes a node or moves the layout.
+const matchedChars = (files: number) => `${files}/`.length;
+
 /** Busiest first, so the rows a panel opens on are the ones most leaned on. */
 export const busiestFirst = (a: FileNode, b: FileNode) => b.fanIn - a.fanIn || (a.path < b.path ? -1 : 1);
 
@@ -179,7 +184,10 @@ export function deriveView(
     const win = windows.get(g.id);
     const members = ordered.get(g.id);
     if (!win || !members) {
-      const chars = Math.max(base.label.length, statsText(base.files, base.fanIn, base.fanOut).length);
+      const chars = Math.max(
+        base.label.length,
+        matchedChars(base.files) + statsText(base.files, base.fanIn, base.fanOut).length,
+      );
       return {
         ...base,
         kind: "folded",
@@ -191,7 +199,7 @@ export function deriveView(
     const scrolls = members.length > MAX_ROWS;
     const header = `${base.label}  ${statsText(base.files, base.fanIn, base.fanOut)}`;
     const widest = Math.max(
-      header.length,
+      header.length + matchedChars(base.files),
       SWATCH_CHARS + `${members.length} below`.length,
       ...members.map(
         (f) => SWATCH_CHARS + `${widestLabels.get(f.path) ?? f.path}  ${statsText(null, f.fanIn, f.fanOut)}`.length,
@@ -321,6 +329,50 @@ export function highlight(view: View, fileEdges: readonly Edge[], folding: Foldi
   for (const e of view.edges) {
     if (selectedEnd(e.from)) result.edges.set(e.id, "out");
     else if (selectedEnd(e.to)) result.edges.set(e.id, "in");
+  }
+  return result;
+}
+
+export interface CategoryFocus {
+  /** Files of the category in each group. Every group is present, at zero if none match. */
+  matched: Map<string, number>;
+  /** Where a matching file is drawn: its row, the overflow row it's behind, or its folder. */
+  endpoints: Set<Endpoint>;
+  /** Drawn edges carrying at least one import between two matching files. */
+  edges: Set<string>;
+}
+
+/**
+ * What stays at full strength when a category is picked in the rail. Nothing is
+ * removed, only dimmed, so the repository keeps its shape. The per-group counts
+ * add up to the category's count in the rail because both count the same files.
+ */
+export function categoryFocus(
+  view: View,
+  files: readonly FileNode[],
+  edges: readonly Edge[],
+  folding: Folding,
+  category: string,
+): CategoryFocus {
+  const result: CategoryFocus = {
+    matched: new Map(folding.groups.map((g) => [g.id, 0])),
+    endpoints: new Set(),
+    edges: new Set(),
+  };
+  const matches = (path: string) => extensionOf(path) === category;
+  for (const f of files) {
+    if (!matches(f.path)) continue;
+    const group = folding.groupOf.get(f.path);
+    const end = view.endpoints.get(f.path);
+    if (group === undefined || !end) throw new Error(`${f.path} is not on the map`);
+    result.matched.set(group, (result.matched.get(group) ?? 0) + 1);
+    result.endpoints.add(end);
+  }
+  // Same id deriveView gives a drawn edge, so a file edge finds the line it was folded into.
+  for (const e of edges) {
+    if (!matches(e.from) || !matches(e.to)) continue;
+    if (folding.groupOf.get(e.from) === folding.groupOf.get(e.to)) continue;
+    result.edges.add(`${view.endpoints.get(e.from)}->${view.endpoints.get(e.to)}`);
   }
   return result;
 }

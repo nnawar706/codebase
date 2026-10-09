@@ -5,16 +5,15 @@ import { countByCategory, extensionOf } from "@/lib/map/category";
 import { adjacency, summarise, type Neighbour } from "@/lib/map/detail";
 import type { Folding } from "@/lib/map/fold";
 import type { Hover, Selection } from "@/lib/map/view";
+import { DEFAULT_DEPTH, walk, type Direction } from "@/lib/graph/walk";
 import type { Edge, FileNode } from "@/parser/types";
 import { TypeSwatch } from "./FileType";
+import { Empty, Expandable, PathRow, Section, linkingFor, type Linking } from "./PaneParts";
 
 export type Tab = "structure" | "explanation";
 
 /** Files the "imported by nothing" list shows before it's expanded. */
 const UNIMPORTED_SHOWN = 10;
-
-// Same mark the map uses for what the pointer is over on the other side.
-const MARK = "ring-1 ring-inset ring-accent";
 
 interface Props {
   name: string;
@@ -34,13 +33,6 @@ interface Props {
   onHover: (h: Hover | null) => void;
 }
 
-/** What a path row needs to link back to the map. */
-interface Linking {
-  marked: (path: string) => boolean;
-  onFocus: (path: string) => void;
-  onHover: (h: Hover | null) => void;
-}
-
 export function DetailPane(props: Props) {
   const { files, edges, folding, selection, hover, tab, onTab, onFocus, onHover } = props;
   // All derived once per result: selecting or hovering only looks things up.
@@ -48,10 +40,7 @@ export function DetailPane(props: Props) {
   const byPath = useMemo(() => new Map(files.map((f) => [f.path, f])), [files]);
   const groupFiles = useMemo(() => new Map(folding.groups.map((g) => [g.id, g.files])), [folding]);
 
-  // A hovered folder on the map marks every listed file inside it.
-  const marked = (path: string) =>
-    hover === null ? false : hover.kind === "file" ? hover.path === path : folding.groupOf.get(path) === hover.id;
-  const linking: Linking = { marked, onFocus, onHover };
+  const linking = linkingFor(hover, folding, onFocus, onHover);
 
   if (selection === null) return <Summary {...props} linking={linking} />;
 
@@ -106,6 +95,8 @@ export function DetailPane(props: Props) {
             <dt className="text-muted">Length</dt>
             <dd className="tabular-nums">{file.lines} lines</dd>
           </dl>
+          {/* Keyed by file so a walk never outlives the selection it was run from. */}
+          <Walk key={file.path} path={file.path} edges={edges} linking={linking} />
           {/* Counts are the lists' own lengths, so the number and the rows can't disagree. */}
           <Section title="Imports" count={<span className="text-outgoing">{imports.length}→</span>}>
             <NeighbourList neighbours={imports} empty="Imports no file in this repository." linking={linking} />
@@ -129,8 +120,6 @@ function Summary({
   linking,
 }: Pick<Props, "name" | "adapter" | "files" | "skipped" | "unresolved"> & { linking: Linking }) {
   const summary = useMemo(() => summarise(files), [files]);
-  const [showAll, setShowAll] = useState(false);
-  const unimported = showAll ? summary.unimported : summary.unimported.slice(0, UNIMPORTED_SHOWN);
   const framework = adapter === "none" ? null : adapter;
 
   return (
@@ -166,22 +155,17 @@ function Summary({
         )}
       </Section>
       <Section title="Imported by nothing" count={summary.unimported.length} sub="Where reading starts">
-        <ul>
-          {unimported.map((f) => (
-            <PathRow key={f.path} path={f.path} linking={linking}>
-              <span className="font-mono text-outgoing tabular-nums">{f.fanOut}→</span>
-            </PathRow>
-          ))}
-        </ul>
-        {summary.unimported.length > UNIMPORTED_SHOWN && (
-          <button
-            type="button"
-            onClick={() => setShowAll((v) => !v)}
-            className="flex h-6 w-full cursor-pointer items-center px-3 text-left text-muted hover:text-foreground"
-          >
-            {showAll ? "Show fewer" : `Show all ${summary.unimported.length}`}
-          </button>
-        )}
+        <Expandable items={summary.unimported} shown={UNIMPORTED_SHOWN}>
+          {(visible) => (
+            <ul>
+              {visible.map((f) => (
+                <PathRow key={f.path} path={f.path} linking={linking}>
+                  <span className="font-mono text-outgoing tabular-nums">{f.fanOut}→</span>
+                </PathRow>
+              ))}
+            </ul>
+          )}
+        </Expandable>
       </Section>
     </>
   );
@@ -235,33 +219,6 @@ function Explanation() {
   return <Empty>No explanation yet. One is written by a model, and nothing calls one in this build.</Empty>;
 }
 
-function Section({
-  title,
-  count,
-  sub,
-  children,
-}: {
-  title: string;
-  count?: ReactNode;
-  sub?: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="border-b border-border pb-1 last:border-b-0">
-      <h3 className="flex h-7 items-center gap-2 px-3 text-[11px] text-muted">
-        <span>{title}</span>
-        {count !== undefined && <span className="font-mono tabular-nums">{count}</span>}
-        {sub && <span className="ml-auto">{sub}</span>}
-      </h3>
-      {children}
-    </section>
-  );
-}
-
-function Empty({ children }: { children: ReactNode }) {
-  return <p className="px-3 py-1.5 text-muted">{children}</p>;
-}
-
 function NeighbourList({ neighbours, empty, linking }: { neighbours: Neighbour[]; empty: string; linking: Linking }) {
   if (neighbours.length === 0) return <Empty>{empty}</Empty>;
   return (
@@ -279,29 +236,72 @@ function NeighbourList({ neighbours, empty, linking }: { neighbours: Neighbour[]
   );
 }
 
-// The folder truncates and the file name never does, so a row always says
-// which file it is even when the path is longer than the pane.
-function PathRow({ path, linking, children }: { path: string; linking: Linking; children?: ReactNode }) {
-  const slash = path.lastIndexOf("/");
+const WALKS: { direction: Direction; label: string; empty: string }[] = [
+  {
+    direction: "dependents",
+    label: "Blast radius",
+    empty: "No file in this repository imports it, so a change here reaches nothing else.",
+  },
+  { direction: "dependencies", label: "Dependency chain", empty: "It imports no file in this repository." },
+];
+
+// Everything that breaks if this file changes, or everything it needs. Worked
+// out on click from the edges already in the browser: no request, no spinner.
+function Walk({ path, edges, linking }: { path: string; edges: readonly Edge[]; linking: Linking }) {
+  const [direction, setDirection] = useState<Direction | null>(null);
+  const reached = useMemo(() => (direction ? walk(edges, path, direction) : null), [edges, path, direction]);
+  const active = WALKS.find((w) => w.direction === direction);
+  const steps = Array.from({ length: DEFAULT_DEPTH }, (_, i) => i + 1);
+
   return (
-    <li>
-      <button
-        type="button"
-        title={path}
-        onClick={() => linking.onFocus(path)}
-        onMouseEnter={() => linking.onHover({ kind: "file", path })}
-        onMouseLeave={() => linking.onHover(null)}
-        className={`flex h-6 w-full cursor-pointer items-center gap-2 px-3 text-left hover:bg-surface ${
-          linking.marked(path) ? MARK : ""
-        }`}
-      >
-        <TypeSwatch ext={extensionOf(path)} />
-        <span className="flex min-w-0 font-mono text-[12px]">
-          <span className="truncate text-muted">{path.slice(0, slash + 1)}</span>
-          <span className="shrink-0">{path.slice(slash + 1)}</span>
-        </span>
-        {children && <span className="ml-auto shrink-0 pl-2">{children}</span>}
-      </button>
-    </li>
+    <section className="border-b border-border pb-1">
+      <div className="flex gap-1.5 px-3 py-2">
+        {WALKS.map((w) => (
+          <button
+            key={w.direction}
+            type="button"
+            aria-pressed={direction === w.direction}
+            onClick={() => setDirection((d) => (d === w.direction ? null : w.direction))}
+            className={`h-6 cursor-pointer rounded border px-2 ${
+              direction === w.direction
+                ? "border-accent bg-accent/10 text-accent"
+                : "border-border text-foreground hover:border-muted"
+            }`}
+          >
+            {w.label}
+          </button>
+        ))}
+      </div>
+      {active &&
+        reached &&
+        (reached.length === 0 ? (
+          <Empty>{active.empty}</Empty>
+        ) : (
+          steps.map((step) => {
+            const at = reached.filter((r) => r.depth === step);
+            return (
+              <div key={step}>
+                <h4 className="flex h-6 items-center gap-2 px-3 text-[11px] text-muted">
+                  <span>{step === 1 ? "Directly" : `${step} steps away`}</span>
+                  <span
+                    className={`font-mono tabular-nums ${
+                      direction === "dependents" ? "text-incoming" : "text-outgoing"
+                    }`}
+                  >
+                    {direction === "dependents" ? `←${at.length}` : `${at.length}→`}
+                  </span>
+                </h4>
+                {at.length > 0 && (
+                  <ul>
+                    {at.map((r) => (
+                      <PathRow key={r.path} path={r.path} linking={linking} />
+                    ))}
+                  </ul>
+                )}
+              </div>
+            );
+          })
+        ))}
+    </section>
   );
 }

@@ -7,6 +7,7 @@
 // matches the contract fails here rather than downstream.
 
 import { readFileSync, writeFileSync } from "node:fs";
+import { ADAPTERS } from "../parser/adapters/index.ts";
 import { parseRepository } from "../parser/index.ts";
 import { readParseResult } from "../parser/read.ts";
 import { EDGE_KINDS, IMPORT_OUTCOMES, type ParseResult } from "../parser/types.ts";
@@ -75,7 +76,7 @@ if (readPath) {
     process.exit(1);
   }
   const started = performance.now();
-  const result = parseRepository(dir);
+  const result = parseRepository(dir, ADAPTERS);
   print(result);
   console.log(`\nparsed in ${Math.round(performance.now() - started)} ms`);
   if (outPath) {

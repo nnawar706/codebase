@@ -21,7 +21,9 @@ import { layout } from "@/lib/map/layout";
 import {
   HEADER_H,
   ROW_H,
+  categoryFocus,
   deriveView,
+  type CategoryFocus,
   highlight,
   type Endpoint,
   type FoldedItem,
@@ -47,11 +49,22 @@ export interface MapActions {
 // Each node gets the highlight state it needs to draw itself; null means
 // nothing is selected and everything is at full strength. `marked` is what the
 // pointer is over in the detail pane, shown here so the two can be matched up.
-type FoldedData = { item: FoldedItem; lit: boolean; selected: boolean; marked: boolean; actions: MapActions };
+// `matched` is how many of its files are in the category picked in the rail,
+// null when none is; the selection and the category each dim on their own.
+type FoldedData = {
+  item: FoldedItem;
+  lit: boolean;
+  selected: boolean;
+  marked: boolean;
+  matched: number | null;
+  actions: MapActions;
+};
 type PanelData = {
   item: PanelItem;
   lit: boolean;
   hl: Highlight | null;
+  focus: CategoryFocus | null;
+  matched: number | null;
   selection: Selection | null;
   marked: Endpoint | null;
   actions: MapActions;
@@ -67,7 +80,7 @@ const MARK = "ring-1 ring-inset ring-accent";
 const handle = "!h-px !min-h-0 !w-px !min-w-0 !border-0 !bg-transparent";
 
 function Folded({ data }: NodeProps<FoldedNode>) {
-  const { item, lit, selected, marked, actions } = data;
+  const { item, lit, selected, marked, matched, actions } = data;
   // Opening is handled by the canvas's onNodeClick, not here; see Canvas.
   return (
     <div
@@ -81,10 +94,21 @@ function Folded({ data }: NodeProps<FoldedNode>) {
       <SlotHandles id="node" />
       <span className="truncate font-mono text-[12px] leading-4">{item.label}</span>
       <span className="flex items-center gap-2 text-[11px] leading-4">
-        <span className="text-muted tabular-nums">{item.files} files</span>
+        <FileCount files={item.files} matched={matched} />
         <Fans fanIn={item.fanIn} fanOut={item.fanOut} />
       </span>
     </div>
+  );
+}
+
+// With a category picked, how many of the folder's files are in it, in the
+// accent the rail marks the category with.
+function FileCount({ files, matched }: { files: number; matched: number | null }) {
+  return (
+    <span className="text-[11px] text-muted tabular-nums">
+      {matched !== null && <span className="text-accent">{matched}/</span>}
+      {files} files
+    </span>
   );
 }
 
@@ -114,8 +138,9 @@ function SlotHandles({ id }: { id: HandleId }) {
 }
 
 function Panel({ data }: NodeProps<PanelNode>) {
-  const { item, lit, hl, selection, marked, actions } = data;
-  const rowLit = (end: Endpoint) => !hl || hl.endpoints.has(end) || end === marked;
+  const { item, lit, hl, focus, matched, selection, marked, actions } = data;
+  const rowLit = (end: Endpoint) =>
+    end === marked || ((!hl || hl.endpoints.has(end)) && (!focus || focus.endpoints.has(end)));
   const above: Endpoint = `u:${item.id}`;
   const below: Endpoint = `d:${item.id}`;
 
@@ -150,7 +175,7 @@ function Panel({ data }: NodeProps<PanelNode>) {
         className="flex shrink-0 cursor-pointer items-center gap-2 border-b border-border bg-surface px-2.5 text-left"
       >
         <span className="truncate font-mono text-[12px]">{item.label}</span>
-        <span className="text-[11px] text-muted tabular-nums">{item.files} files</span>
+        <FileCount files={item.files} matched={matched} />
         <span className="ml-auto">
           <Fans fanIn={item.fanIn} fanOut={item.fanOut} />
         </span>
@@ -243,10 +268,12 @@ export interface MapProps {
   open: ReadonlyMap<string, number>;
   selection: Selection | null;
   hover: Hover | null;
+  /** The file category picked in the rail, or null. */
+  category: string | null;
   actions: MapActions;
 }
 
-function Canvas({ files, edges, folding, open, selection, hover, actions }: MapProps) {
+function Canvas({ files, edges, folding, open, selection, hover, category, actions }: MapProps) {
   const view = useMemo(() => deriveView(files, edges, folding, open), [files, edges, folding, open]);
 
   // Layout depends on which folders are open, never on how far one is
@@ -261,6 +288,10 @@ function Canvas({ files, edges, folding, open, selection, hover, actions }: MapP
     () => (selection ? highlight(view, edges, folding, selection) : null),
     [view, edges, folding, selection],
   );
+  const focus = useMemo(
+    () => (category === null ? null : categoryFocus(view, files, edges, folding, category)),
+    [view, files, edges, folding, category],
+  );
 
   // Only a hovered file is marked here; a hovered group came from the map
   // itself, which already shows it. The mark lands wherever the file is drawn
@@ -271,15 +302,16 @@ function Canvas({ files, edges, folding, open, selection, hover, actions }: MapP
     () =>
       view.items.map((item): FoldedNode | PanelNode => {
         const position = placed.positions.get(item.id) ?? { x: 0, y: 0 };
-        const lit = !hl || hl.groups.has(item.id);
+        const matched = focus ? (focus.matched.get(item.id) ?? 0) : null;
+        const lit = (!hl || hl.groups.has(item.id)) && matched !== 0;
         const common = { id: item.id, position, width: item.width, height: item.height, zIndex: NODE_Z };
         if (item.kind === "folded") {
           const selected = selection?.kind === "group" && selection.id === item.id;
-          return { ...common, type: "folded", data: { item, lit, selected, marked: marked === `g:${item.id}`, actions } };
+          return { ...common, type: "folded", data: { item, lit, selected, marked: marked === `g:${item.id}`, matched, actions } };
         }
-        return { ...common, type: "panel", data: { item, lit, hl, selection, marked, actions } };
+        return { ...common, type: "panel", data: { item, lit, hl, focus, matched, selection, marked, actions } };
       }),
-    [view, placed, hl, selection, marked, actions],
+    [view, placed, hl, focus, selection, marked, actions],
   );
 
   const flowEdges = useMemo(
@@ -293,13 +325,17 @@ function Canvas({ files, edges, folding, open, selection, hover, actions }: MapP
           target: e.target,
           sourceHandle: e.sourceHandle,
           targetHandle: e.targetHandle,
-          style: { stroke: color, strokeWidth: direction ? 1.5 : 1, opacity: hl && !direction ? 0.12 : 1 },
+          style: {
+            stroke: color,
+            strokeWidth: direction ? 1.5 : 1,
+            opacity: (hl && !direction) || (focus && !focus.edges.has(e.id)) ? 0.12 : 1,
+          },
           markerEnd: { type: MarkerType.ArrowClosed, color, width: 12, height: 12 },
           // Lit edges draw over dimmed ones, and every edge stays under the nodes.
           zIndex: direction ? EDGE_LIT_Z : 0,
         };
       }),
-    [view, hl],
+    [view, hl, focus],
   );
 
   // The whole graph is fitted as large as the canvas allows: on first load, and
