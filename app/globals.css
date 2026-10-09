@@ -1,26 +1,70 @@
 @import "tailwindcss";
 
+/* The root carries data-theme="system" | "light" | "dark". Forced values win
+   over the OS; "system" defers to prefers-color-scheme. Tailwind's dark:
+   variant keys off the same rule so utilities and tokens never disagree. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where([data-theme="system"], [data-theme="system"] *) {
+      @slot;
+    }
+  }
+}
+
+/* Surfaces, borders and text are greyscale; blue is the only accent and means
+   "selected or interactive". */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #fcfcfc;
+  --surface: #f4f4f5;
+  --border: #e4e4e7;
+  --foreground: #18181b;
+  --muted: #71717a;
+  --accent: #2563eb;
+  --accent-foreground: #ffffff;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0c0c0d;
+  --surface: #161618;
+  --border: #27272a;
+  --foreground: #e4e4e7;
+  --muted: #8b8b93;
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root[data-theme="system"] {
+    color-scheme: dark;
+    --background: #0c0c0d;
+    --surface: #161618;
+    --border: #27272a;
+    --foreground: #e4e4e7;
+    --muted: #8b8b93;
+    --accent: #3b82f6;
+    --accent-foreground: #ffffff;
+  }
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
 }
