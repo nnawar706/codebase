@@ -63,6 +63,7 @@ async function Analysis({ id }: { id: string }) {
       </header>
       <AnalysisStages
         id={data.id}
+        updatedAt={data.updated_at}
         initial={{ status: data.status, stage: data.stage, message: data.error ?? data.stage_message }}
       />
       {stale && (
