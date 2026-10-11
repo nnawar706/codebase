@@ -4,10 +4,10 @@
 // Type aliases, not interfaces: only an alias is assignable to a JSON column's
 // type, and the result is stored as-is.
 
-export const SCHEMA_VERSION = 3;
+export const SCHEMA_VERSION = 4;
 
-// Matches the `kind` values the edges table accepts. `require` is not parsed yet.
-export const EDGE_KINDS = ["import", "re-export", "dynamic-import"] as const;
+// Matches the `kind` values the edges table accepts.
+export const EDGE_KINDS = ["import", "re-export", "dynamic-import", "require"] as const;
 export type EdgeKind = (typeof EDGE_KINDS)[number];
 
 export type FileNode = {
@@ -62,7 +62,7 @@ export type UnresolvedReason = (typeof UNRESOLVED_REASONS)[number];
 export type UnresolvedImport = {
   from: string;
   line: number;
-  /** For a non-literal dynamic import, the expression's source text. */
+  /** For a non-literal dynamic import or require, the expression's source text. */
   specifier: string;
   kind: EdgeKind;
   reason: UnresolvedReason;

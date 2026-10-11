@@ -126,6 +126,7 @@ export function parseRepository(rootPath: string, adapters: readonly FrameworkAd
     import: emptyCounts(),
     "re-export": emptyCounts(),
     "dynamic-import": emptyCounts(),
+    require: emptyCounts(),
   };
   const excludedByReason: Record<ExcludedReason, number> = {
     "skipped-file": 0,

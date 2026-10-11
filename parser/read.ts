@@ -133,6 +133,7 @@ const coverage = (v: unknown, at: string): Coverage => {
         import: outcomeCounts(k.import, `${at}.imports.byKind.import`),
         "re-export": outcomeCounts(k["re-export"], `${at}.imports.byKind.re-export`),
         "dynamic-import": outcomeCounts(k["dynamic-import"], `${at}.imports.byKind.dynamic-import`),
+        require: outcomeCounts(k.require, `${at}.imports.byKind.require`),
       },
       excludedByReason: {
         "skipped-file": int(x["skipped-file"], `${at}.imports.excludedByReason.skipped-file`),

@@ -40,13 +40,20 @@ const edgeKind = (kind: string): EdgeKind => {
  * person's own token. Fan counts and folders aren't stored; they're the same
  * arithmetic over paths and edges the parser does.
  */
+const has = (v: unknown, key: string): v is Record<string, unknown> => typeof v === "object" && v !== null && key in v;
+
 /**
- * An analysis stored before adapters recovered routes has no route coverage,
- * and its roles came from adapters that no longer exist. Reading it as if it
- * were current would show an empty route table that never looked.
+ * An analysis stored by an earlier parser can't be read as if it were current.
+ * Before routes were recovered there's no route coverage, and the roles came
+ * from adapters that no longer exist: it would show an empty route table that
+ * never looked. Before require() was read there's no count for it, and a
+ * CommonJS repository would show no edges and full coverage of nothing.
  */
-export function predatesRoutes(coverage: unknown): boolean {
-  return typeof coverage === "object" && coverage !== null && !("routes" in coverage);
+export function predatesParser(coverage: unknown): boolean {
+  if (!has(coverage, "routes")) return true;
+  const imports = has(coverage, "imports") ? coverage.imports : null;
+  const byKind = has(imports, "byKind") ? imports.byKind : null;
+  return !has(byKind, "require");
 }
 
 export async function loadStoredResult(supabase: Supabase, analysisId: string, adapter: string, coverage: unknown): Promise<StoredResult> {

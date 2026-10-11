@@ -199,12 +199,13 @@ export function createResolver({ root, nodes, skipped, workspacePackages }: Reso
       .sort((a, b) => b.prefix.length - a.prefix.length);
 
   // Under Node16/NodeNext a package can resolve differently for import and
-  // require, so the mode has to match how Node would load this file. Bundler
+  // require, so the mode has to match how Node would load this call. Bundler
   // and Node10 resolution don't use a mode.
   const modeFor = (fromAbs: string, kind: EdgeKind, config: ConfigEntry): ts.ResolutionMode => {
     const resolution = config.options.moduleResolution;
     if (resolution === undefined || !NODE_ESM_RESOLUTION.has(resolution)) return undefined;
     if (kind === "dynamic-import") return ts.ModuleKind.ESNext;
+    if (kind === "require") return ts.ModuleKind.CommonJS;
     return ts.getImpliedNodeFormatForFile(fromAbs, config.cache.getPackageJsonInfoCache(), ts.sys, config.options);
   };
 

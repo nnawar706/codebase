@@ -71,7 +71,7 @@ const td = "h-7 px-3 first:pl-0";
                 <th className={th}>State</th>
                 <th className={th}>Commit</th>
                 <th className={th}>Started (UTC)</th>
-                <th className={`${th} text-right`}>Time Taken</th>
+                <th className={`${th} text-right`}>How Long</th>
                 <th className={`${th} w-full`}>Reason</th>
               </tr>
             </thead>

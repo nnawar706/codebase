@@ -191,6 +191,9 @@ function nextRoutes(root: string, files: ReadonlyMap<string, ts.SourceFile>): Ro
     const place = placeOf(file);
     if (!place) continue;
     if (file.startsWith("src/") && atRoot.has(place.top)) continue;
+    // ES exports only: whether Next.js would treat module.exports as a page or
+    // handler is up to its bundler, not anything in the syntax, so a
+    // CommonJS route file stays unrecovered rather than guessed.
     const { names, starFrom } = exportedNames(sf);
     const defaultExport = names.find((n) => n.name === "default");
     const found: { method: RouteMethod; line: number; segments: string[]; blocker: Blocker | null }[] = [];

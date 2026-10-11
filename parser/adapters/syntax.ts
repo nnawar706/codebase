@@ -29,11 +29,129 @@ export interface ExportedName {
   line: number;
 }
 
+export interface Exports {
+  names: ExportedName[];
+  /** Where the file hands over a whole module or object whose names can't be listed from here. */
+  starFrom: ExportedName[];
+}
+
+const isModuleExports = (node: ts.Expression) =>
+  ts.isPropertyAccessExpression(node) &&
+  ts.isIdentifier(node.expression) &&
+  node.expression.text === "module" &&
+  node.name.text === "exports";
+
+const isExportsObject = (node: ts.Expression) =>
+  (ts.isIdentifier(node) && node.text === "exports") || isModuleExports(node);
+
+/**
+ * A write to one property of the exports object: its name, or null when the
+ * key is computed. Undefined when the node isn't such a write.
+ */
+function exportsMember(node: ts.Expression, exportsIsLive: boolean): string | null | undefined {
+  const isTarget = (e: ts.Expression) => isModuleExports(e) || (exportsIsLive && ts.isIdentifier(e) && e.text === "exports");
+  if (ts.isPropertyAccessExpression(node) && isTarget(node.expression)) return node.name.text;
+  if (ts.isElementAccessExpression(node) && isTarget(node.expression)) return literalString(node.argumentExpression);
+  return undefined;
+}
+
+const requiredSpecifier = (node: ts.Expression): string | null =>
+  ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "require" && node.arguments.length === 1
+    ? literalString(node.arguments[0])
+    : null;
+
+/**
+ * What a CommonJS file puts on module.exports, read from its top-level
+ * statements in order the way Node would run them. An assignment inside a
+ * function or a branch may never run, so it isn't read.
+ */
+function commonjsExports(sf: ts.SourceFile): Exports {
+  let names: ExportedName[] = [];
+  let starFrom: ExportedName[] = [];
+  // `exports` starts as an alias of module.exports. Replacing module.exports
+  // detaches it, and writes to it after that export nothing.
+  let exportsIsLive = true;
+
+  for (const s of sf.statements) {
+    if (!ts.isExpressionStatement(s)) continue;
+    const e = s.expression;
+
+    // Object.defineProperty(exports, "name", ...), as compilers write it.
+    if (
+      ts.isCallExpression(e) &&
+      ts.isPropertyAccessExpression(e.expression) &&
+      ts.isIdentifier(e.expression.expression) &&
+      e.expression.expression.text === "Object" &&
+      e.expression.name.text === "defineProperty" &&
+      e.arguments.length >= 2 &&
+      (isModuleExports(e.arguments[0]) || (exportsIsLive && isExportsObject(e.arguments[0])))
+    ) {
+      const name = literalString(e.arguments[1]);
+      if (name !== null) names.push({ name, line: lineOf(sf, s) });
+      continue;
+    }
+
+    if (!ts.isBinaryExpression(e) || e.operatorToken.kind !== ts.SyntaxKind.EqualsToken) continue;
+
+    // `exports = module.exports = x` assigns down a chain; every target gets x.
+    const targets: ts.Expression[] = [];
+    let value: ts.Expression = e;
+    while (ts.isBinaryExpression(value) && value.operatorToken.kind === ts.SyntaxKind.EqualsToken) {
+      targets.push(value.left);
+      value = value.right;
+    }
+
+    const member = targets.map((t) => exportsMember(t, exportsIsLive)).find((n) => n !== undefined);
+    if (member !== undefined) {
+      if (member === null) starFrom.push({ name: "", line: lineOf(sf, s) });
+      else names.push({ name: member, line: lineOf(sf, s) });
+      continue;
+    }
+    if (!targets.some(isModuleExports)) continue;
+
+    // The whole of module.exports is replaced: what came before is gone.
+    names = [];
+    starFrom = [];
+    exportsIsLive = targets.some((t) => ts.isIdentifier(t) && t.text === "exports");
+    const required = requiredSpecifier(value);
+    if (required !== null) {
+      starFrom.push({ name: required, line: lineOf(sf, s) });
+    } else if (ts.isObjectLiteralExpression(value)) {
+      for (const p of value.properties) {
+        if (ts.isSpreadAssignment(p)) {
+          starFrom.push({ name: requiredSpecifier(p.expression) ?? "", line: lineOf(sf, p) });
+          continue;
+        }
+        const key = p.name;
+        const name =
+          key === undefined
+            ? null
+            : ts.isIdentifier(key) || ts.isStringLiteral(key) || ts.isNumericLiteral(key)
+              ? key.text
+              : ts.isComputedPropertyName(key)
+                ? literalString(key.expression)
+                : null;
+        if (name !== null) names.push({ name, line: lineOf(sf, p) });
+        else starFrom.push({ name: "", line: lineOf(sf, p) });
+      }
+    } else {
+      // A function, class or other value is the module itself, which is what
+      // an ES import of a CommonJS module receives as its default.
+      names.push({ name: "default", line: lineOf(sf, s) });
+    }
+  }
+
+  const seen = new Set<string>();
+  return { names: names.filter((n) => !seen.has(n.name) && seen.add(n.name)), starFrom };
+}
+
 /**
  * Value exports by the name they're exported under, and whether the file
  * also re-exports everything from somewhere, which hides names from here.
+ * CommonJS exports are kept apart: which of the two a loader honours depends
+ * on the framework, so the reader decides.
  */
-export function exportedNames(sf: ts.SourceFile): { names: ExportedName[]; starFrom: ExportedName[] } {
+export function exportedNames(sf: ts.SourceFile): Exports & { commonjs: Exports } {
   const names: ExportedName[] = [];
   const starFrom: ExportedName[] = [];
   for (const s of sf.statements) {
@@ -70,5 +188,5 @@ export function exportedNames(sf: ts.SourceFile): { names: ExportedName[]; starF
       if (ts.isIdentifier(s.name)) names.push({ name: s.name.text, line: lineOf(sf, s.name) });
     }
   }
-  return { names, starFrom };
+  return { names, starFrom, commonjs: commonjsExports(sf) };
 }

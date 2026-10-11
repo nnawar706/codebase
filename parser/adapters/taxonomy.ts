@@ -74,6 +74,19 @@ export const TAXONOMY: Readonly<Record<string, Framework>> = {
       config,
     ],
   },
+  // Every Express layer is reached by being required by the one above it.
+  express: {
+    label: "Express",
+    categories: [
+      imported("Routes", ["route"]),
+      imported("Controllers", ["controller"]),
+      imported("Services", ["service"]),
+      imported("Models", ["model"]),
+      imported("Middleware", ["middleware"]),
+      tests,
+      config,
+    ],
+  },
   react: { label: "React", categories: [components, hooks, tests, config] },
   none: { label: null, categories: [tests, config] },
 };
