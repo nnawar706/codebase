@@ -5,7 +5,7 @@ import { rerunAnalysis, type RerunState } from "./actions";
 
 const initial: RerunState = { error: null };
 
-export function RerunButton({ analysisId }: { analysisId: string }) {
+export function RerunButton({ analysisId, label = "Re-run" }: { analysisId: string; label?: string }) {
   const [state, action, pending] = useActionState(rerunAnalysis, initial);
   return (
     <form action={action} className="flex items-center gap-2">
@@ -17,7 +17,7 @@ export function RerunButton({ analysisId }: { analysisId: string }) {
         title="Analyze the repository's latest commit again"
         className="h-6 shrink-0 rounded border border-border px-2 hover:bg-surface disabled:opacity-60"
       >
-        {pending ? "Starting…" : "Re-run"}
+        {pending ? "Starting…" : label}
       </button>
     </form>
   );

@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeControl, themeInitScript } from "@/layouts/theme";
+import Link from "next/link";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,7 +57,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ClerkProvider appearance={clerkAppearance}>
           <header className="flex h-9 shrink-0 items-center justify-between border-b border-border px-3">
             <div className="flex items-center gap-3">
-              <span className="font-mono font-medium">Codebase</span>
+              <Link href={"/dashboard"} className="font-mono font-medium">Codebase</Link>
               {/* Auth state is per-request; Suspense keeps the rest of the shell prerenderable under cacheComponents. */}
               <Suspense fallback={<div className="h-7" />}>
                 <Show when="signed-in">

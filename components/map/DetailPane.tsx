@@ -7,6 +7,7 @@ import type { Folding } from "@/lib/map/fold";
 import type { Hover, Selection } from "@/lib/map/view";
 import { DEFAULT_DEPTH, walk, type Direction } from "@/lib/graph/walk";
 import type { Edge, FileNode, Route, UnrecoveredRoute } from "@/parser/types";
+import { Explanation, subjectKey, type ExplainEntry, type Subject, type Tracing } from "./Explanation";
 import { TypeSwatch } from "./FileType";
 import { Empty, Expandable, MARK, PathRow, Section, linkingFor, type Linking } from "./PaneParts";
 
@@ -18,6 +19,7 @@ const UNIMPORTED_SHOWN = 10;
 const ROUTES_SHOWN = 15;
 
 interface Props {
+  analysisId: string;
   name: string;
   /** The detected framework's name, or null when none was. */
   framework: string | null;
@@ -36,16 +38,36 @@ interface Props {
   /** Moves the map's selection to a file. */
   onFocus: (path: string) => void;
   onHover: (h: Hover | null) => void;
+  /** Path -> role a model gave a file no convention matched. */
+  labels: Readonly<Record<string, string>>;
+  labelError: string | null;
+  explanations: ReadonlyMap<string, ExplainEntry>;
+  onExplain: (subject: Subject) => void;
+  model: string;
+  tracing: Tracing;
 }
 
 export function DetailPane(props: Props) {
-  const { files, edges, folding, selection, hover, tab, onTab, onFocus, onHover } = props;
+  const { files, edges, folding, selection, hover, tab, onTab, onFocus, onHover, labels } = props;
   // All derived once per result: selecting or hovering only looks things up.
   const adj = useMemo(() => adjacency(edges), [edges]);
   const byPath = useMemo(() => new Map(files.map((f) => [f.path, f])), [files]);
+  const paths = useMemo(() => new Set(files.map((f) => f.path)), [files]);
   const groupFiles = useMemo(() => new Map(folding.groups.map((g) => [g.id, g.files])), [folding]);
 
   const linking = linkingFor(hover, folding, onFocus, onHover);
+  const explanation = (subject: Subject) => (
+    <Explanation
+      analysisId={props.analysisId}
+      subject={subject}
+      entry={props.explanations.get(subjectKey(subject))}
+      onExplain={props.onExplain}
+      paths={paths}
+      model={props.model}
+      tracing={props.tracing}
+      linking={linking}
+    />
+  );
 
   if (selection === null) return <Summary {...props} linking={linking} />;
 
@@ -59,7 +81,7 @@ export function DetailPane(props: Props) {
         />
         <Tabs tab={tab} onTab={onTab} />
         {tab === "explanation" ? (
-          <Explanation />
+          explanation({ kind: "folder", id: selection.id })
         ) : (
           <Section title="File kinds">
             <ul>
@@ -86,7 +108,7 @@ export function DetailPane(props: Props) {
       <Heading title={file.path} />
       <Tabs tab={tab} onTab={onTab} />
       {tab === "explanation" ? (
-        <Explanation />
+        explanation({ kind: "file", path: file.path })
       ) : (
         <>
           <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-1 border-b border-border px-3 py-2">
@@ -96,7 +118,16 @@ export function DetailPane(props: Props) {
               <span className="font-mono">{extensionOf(file.path)}</span>
             </dd>
             <dt className="text-muted">Role</dt>
-            <dd>{file.role ?? <span className="text-muted">none, no convention matched</span>}</dd>
+            <dd>
+              {file.role ??
+                (Object.hasOwn(labels, file.path) ? (
+                  <>
+                    {labels[file.path]} <span className="text-muted">· labelled by model, no convention matched</span>
+                  </>
+                ) : (
+                  <span className="text-muted">none, no convention matched</span>
+                ))}
+            </dd>
             <dt className="text-muted">Length</dt>
             <dd className="tabular-nums">{file.lines} lines</dd>
           </dl>
@@ -124,11 +155,17 @@ function Summary({
   unrecovered,
   skipped,
   unresolved,
+  labels,
+  labelError,
   linking,
-}: Pick<Props, "name" | "framework" | "files" | "routes" | "unrecovered" | "skipped" | "unresolved"> & {
+}: Pick<
+  Props,
+  "name" | "framework" | "files" | "routes" | "unrecovered" | "skipped" | "unresolved" | "labels" | "labelError"
+> & {
   linking: Linking;
 }) {
   const summary = useMemo(() => summarise(files), [files]);
+  const labelled = Object.keys(labels).length;
 
   return (
     <>
@@ -146,7 +183,18 @@ function Summary({
       <p className="border-b border-border px-3 py-2">
         <span className="tabular-nums">{summary.unidentified}</span>{" "}
         <span className="text-muted">{summary.unidentified === 1 ? "file" : "files"} matched no convention</span>
+        {summary.unidentified > 0 && labelError === null && (
+          <>
+            <span className="text-muted">, </span>
+            <span className="tabular-nums">{labelled}</span> <span className="text-muted">labelled by model</span>
+          </>
+        )}
       </p>
+      {labelError !== null && (
+        <p className="border-b border-border px-3 py-2">
+          <span className="text-muted">Not labelled by model:</span> {labelError}
+        </p>
+      )}
       <RouteTable routes={routes} unrecovered={unrecovered} linking={linking} />
       <Section title="Most depended on">
         {summary.mostDependedOn.length === 0 ? (
@@ -300,10 +348,6 @@ function Tabs({ tab, onTab }: { tab: Tab; onTab: (tab: Tab) => void }) {
       ))}
     </div>
   );
-}
-
-function Explanation() {
-  return <Empty>No explanation yet. One is written by a model, and nothing calls one in this build.</Empty>;
 }
 
 function NeighbourList({ neighbours, empty, linking }: { neighbours: Neighbour[]; empty: string; linking: Linking }) {

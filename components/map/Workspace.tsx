@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
+import { explainFileAction, explainFolderAction } from "@/app/analyses/[id]/explain";
 import { fold } from "@/lib/map/fold";
 import { rail as railFor, reachedByConvention } from "@/lib/map/roles";
 import { MAX_ROWS, busiestFirst, revealOffset, type Hover, type Selection } from "@/lib/map/view";
@@ -9,6 +10,7 @@ import { MapShell } from "../MapShell";
 import { CategoryRail } from "./CategoryRail";
 import { DependencyMap, type MapActions } from "./DependencyMap";
 import { DetailPane, type Tab } from "./DetailPane";
+import { subjectKey, type ExplainEntry, type Subject, type Tracing } from "./Explanation";
 import { InsightsPanel } from "./InsightsPanel";
 import { linkingFor } from "./PaneParts";
 
@@ -16,6 +18,7 @@ import { linkingFor } from "./PaneParts";
 // and hover, so that state lives here rather than in either. Everything either
 // side shows is already in the browser: nothing here fetches.
 export function Workspace({
+  analysisId,
   name,
   adapter,
   files,
@@ -24,7 +27,12 @@ export function Workspace({
   unrecovered,
   skipped,
   unresolved,
+  labels,
+  labelError,
+  model,
+  tracing,
 }: {
+  analysisId: string;
   name: string;
   adapter: string;
   files: readonly FileNode[];
@@ -33,6 +41,12 @@ export function Workspace({
   unrecovered: readonly UnrecoveredRoute[];
   skipped: number;
   unresolved: number;
+  /** Path -> role a model gave a file no convention matched. Never a file's role. */
+  labels: Readonly<Record<string, string>>;
+  /** Why files no convention matched have no label, when labelling failed. */
+  labelError: string | null;
+  model: string;
+  tracing: Tracing;
 }) {
   const rail = useMemo(() => railFor(adapter, files), [adapter, files]);
   const convention = useMemo(() => reachedByConvention(rail.framework), [rail]);
@@ -115,6 +129,23 @@ export function Workspace({
     [folding, rowIndex, sizes],
   );
 
+  // Explanations fetched this visit, by subject. Kept here rather than in the
+  // pane so moving the selection away and back shows the answer again, with
+  // no second click and no second request.
+  const [explanations, setExplanations] = useState<ReadonlyMap<string, ExplainEntry>>(() => new Map());
+  const explain = useCallback(
+    async (subject: Subject) => {
+      const key = subjectKey(subject);
+      setExplanations((prev) => new Map(prev).set(key, { status: "pending" }));
+      const outcome =
+        subject.kind === "file"
+          ? await explainFileAction(analysisId, subject.path)
+          : await explainFolderAction(analysisId, subject.id);
+      setExplanations((prev) => new Map(prev).set(key, { status: "done", outcome }));
+    },
+    [analysisId],
+  );
+
   const linking = linkingFor(hover, folding, focusFile, setHover);
 
   return (
@@ -136,6 +167,7 @@ export function Workspace({
         <>
           <div className="min-h-0 flex-1 overflow-y-auto">
             <DetailPane
+              analysisId={analysisId}
               name={name}
               framework={rail.framework.label}
               files={files}
@@ -151,6 +183,12 @@ export function Workspace({
               onTab={setTab}
               onFocus={focusFile}
               onHover={setHover}
+              labels={labels}
+              labelError={labelError}
+              explanations={explanations}
+              onExplain={explain}
+              model={model}
+              tracing={tracing}
             />
           </div>
           <InsightsPanel files={files} edges={edges} convention={convention} linking={linking} />

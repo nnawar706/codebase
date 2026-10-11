@@ -15,6 +15,9 @@ const values = {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   // No NEXT_PUBLIC_ prefix, so Next never inlines it into a browser bundle.
   SUPABASE_SECRET_KEY: process.env.SUPABASE_SECRET_KEY,
+  // Gemini. Server only, like the key above. LangSmith's variables aren't
+  // here: tracing is optional, and lib/ai/client says on screen when it's off.
+  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
 };
 
 type EnvName = keyof typeof values;

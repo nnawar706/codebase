@@ -90,3 +90,16 @@ export async function downloadArchive({ owner, name }: RepoRef, sha: string, fil
   }
   return bytes;
 }
+
+/**
+ * One file's bytes at one commit, or null when the file isn't there. Read from
+ * raw.githubusercontent.com, which isn't counted against the API's hourly
+ * limit, so explaining a file costs no API request beyond the HEAD lookup.
+ */
+export async function fetchFileAt({ owner, name }: RepoRef, sha: string, file: string): Promise<Buffer | null> {
+  const encoded = file.split("/").map(encodeURIComponent).join("/");
+  const res = await fetch(`https://raw.githubusercontent.com/${owner}/${name}/${sha}/${encoded}`, { headers: HEADERS });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`GitHub answered ${res.status} ${res.statusText} when asked for ${file} at ${sha.slice(0, 7)}`);
+  return Buffer.from(await res.arrayBuffer());
+}

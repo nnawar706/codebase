@@ -7,7 +7,7 @@ import { AnalysisStatus } from "./AnalysisStatus";
 
 // Mirrors the stages the pipeline writes. A stage this list doesn't know is
 // shown by name rather than mapped onto one it does.
-const STAGES = ["fetching", "selecting", "parsing", "storing"] as const;
+const STAGES = ["fetching", "selecting", "parsing", "labelling", "storing"] as const;
 
 export type Progress = {
   status: string;

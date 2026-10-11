@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { AnalysisStages } from "@/components/AnalysisProgress";
 import { Workspace } from "@/components/map/Workspace";
+import { MODEL, tracingState } from "@/lib/ai/client";
 import { isStale } from "@/lib/stale";
 import { loadStoredResult, predatesParser } from "@/lib/stored-analysis";
 import { createServerSupabase } from "@/lib/supabase";
@@ -55,7 +56,7 @@ async function Analysis({ id }: { id: string }) {
   const { data, error } = await supabase
     .from("analyses")
     .select(
-      "id, status, stage, stage_message, error, commit_sha, updated_at, adapter, coverage, project:projects(repo_owner, repo_name)",
+      "id, status, stage, stage_message, error, commit_sha, updated_at, adapter, coverage, label_error, project:projects(repo_owner, repo_name)",
     )
     .eq("id", id)
     .maybeSingle();
@@ -86,11 +87,16 @@ async function Analysis({ id }: { id: string }) {
         </>
       );
     }
-    const result = await loadStoredResult(supabase, data.id, data.adapter, data.coverage);
+    const { result, labels } = await loadStoredResult(supabase, data.id, data.adapter, data.coverage);
     return (
       <>
         {bar}
         <Workspace
+          analysisId={data.id}
+          labels={Object.fromEntries(labels)}
+          labelError={data.label_error}
+          model={MODEL}
+          tracing={tracingState()}
           name={`${data.project.repo_owner}/${data.project.repo_name}`}
           adapter={result.adapter}
           files={result.files}

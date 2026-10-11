@@ -26,6 +26,7 @@ export type Database = {
           error: string | null
           finished_at: string | null
           id: string
+          label_error: string | null
           org_id: string
           project_id: string
           stage: string | null
@@ -42,6 +43,7 @@ export type Database = {
           error?: string | null
           finished_at?: string | null
           id?: string
+          label_error?: string | null
           org_id: string
           project_id: string
           stage?: string | null
@@ -58,6 +60,7 @@ export type Database = {
           error?: string | null
           finished_at?: string | null
           id?: string
+          label_error?: string | null
           org_id?: string
           project_id?: string
           stage?: string | null
@@ -141,47 +144,33 @@ export type Database = {
       }
       explanations: {
         Row: {
-          analysis_id: string
           content: string
           created_at: string
-          file_id: string
           id: string
+          key: string
           model: string
           org_id: string
+          subject: string
         }
         Insert: {
-          analysis_id: string
           content: string
           created_at?: string
-          file_id: string
           id?: string
+          key: string
           model: string
           org_id: string
+          subject: string
         }
         Update: {
-          analysis_id?: string
           content?: string
           created_at?: string
-          file_id?: string
           id?: string
+          key?: string
           model?: string
           org_id?: string
+          subject?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "explanations_analysis_id_org_id_fkey"
-            columns: ["analysis_id", "org_id"]
-            isOneToOne: false
-            referencedRelation: "analyses"
-            referencedColumns: ["id", "org_id"]
-          },
-          {
-            foreignKeyName: "explanations_file_id_analysis_id_org_id_fkey"
-            columns: ["file_id", "analysis_id", "org_id"]
-            isOneToOne: false
-            referencedRelation: "files"
-            referencedColumns: ["id", "analysis_id", "org_id"]
-          },
           {
             foreignKeyName: "explanations_org_id_fkey"
             columns: ["org_id"]

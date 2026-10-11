@@ -56,14 +56,31 @@ export function predatesParser(coverage: unknown): boolean {
   return !has(byKind, "require");
 }
 
-export async function loadStoredResult(supabase: Supabase, analysisId: string, adapter: string, coverage: unknown): Promise<StoredResult> {
+/**
+ * What was stored, and apart from it the roles a model gave files no
+ * convention matched. Those are labels: they never become a file's role,
+ * because a role decides the rail and the entry-point colouring and only
+ * convention may decide those.
+ */
+export interface StoredAnalysis {
+  result: StoredResult;
+  /** Path -> model-given role. */
+  labels: Map<string, string>;
+}
+
+export async function loadStoredResult(
+  supabase: Supabase,
+  analysisId: string,
+  adapter: string,
+  coverage: unknown,
+): Promise<StoredAnalysis> {
   // Ordered by id so pages don't overlap or skip while reading.
   const [files, roles, edges, routes] = await Promise.all([
     readAll("files", (from, to) =>
       supabase.from("files").select("id, path, lines, hash", { count: "exact" }).eq("analysis_id", analysisId).order("id").range(from, to),
     ),
     readAll("file roles", (from, to) =>
-      supabase.from("file_roles").select("file_id, role", { count: "exact" }).eq("analysis_id", analysisId).order("id").range(from, to),
+      supabase.from("file_roles").select("file_id, role, source", { count: "exact" }).eq("analysis_id", analysisId).order("id").range(from, to),
     ),
     readAll("edges", (from, to) =>
       supabase
@@ -84,7 +101,8 @@ export async function loadStoredResult(supabase: Supabase, analysisId: string, a
   ]);
 
   const pathOf = new Map(files.map((f) => [f.id, f.path]));
-  const roleOf = new Map(roles.map((r) => [r.file_id, r.role]));
+  const roleOf = new Map(roles.filter((r) => r.source === "convention").map((r) => [r.file_id, r.role]));
+  const labelOf = new Map(roles.filter((r) => r.source === "ai").map((r) => [r.file_id, r.role]));
   const named = edges.map((e) => {
     const from = pathOf.get(e.source_file_id);
     const to = pathOf.get(e.target_file_id);
@@ -100,7 +118,7 @@ export async function loadStoredResult(supabase: Supabase, analysisId: string, a
 
   const paths = files.map((f) => f.path);
   const fans = fanCounts(paths, named);
-  return readStoredResult({
+  const result = readStoredResult({
     adapter,
     files: files
       .map((f) => {
@@ -123,4 +141,12 @@ export async function loadStoredResult(supabase: Supabase, analysisId: string, a
     routes: located,
     coverage,
   });
+  const labels = new Map(
+    [...labelOf].map(([fileId, role]) => {
+      const path = pathOf.get(fileId);
+      if (!path) throw new Error("A stored label points at a file that wasn't read");
+      return [path, role] as const;
+    }),
+  );
+  return { result, labels };
 }
